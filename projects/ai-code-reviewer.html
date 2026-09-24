@@ -125,48 +125,108 @@
             Because LLM inference across five agents requires 8–20 seconds of compute time, GitHub webhook requests must never block synchronously on AI execution. The ingestion pipeline is decoupled using <strong>BullMQ and Redis</strong>:
           </p>
 
-          <div class="code-preview-box">
-<span class="code-comment"># Ingestion &amp; Worker Pipeline Architecture</span>
-[GitHub Webhook: pull_request.opened]
-   │
-   ▼
-[Express Webhook Ingress]
-   │  ├── 1. HMAC SHA-256 Signature Verification
-   │  ├── 2. MongoDB Delivery ID Deduplication (Replay Protection)
-   │  └── 3. Enqueue Job to BullMQ (Redis)
-   │
-   ▼ <strong>HTTP 202 Accepted (Immediate Response to GitHub within 40ms)</strong>
-   
-[BullMQ Worker Service]
-   │
-   ├── Fetch Git Diff via Octokit (GitHub App JWT Auth)
-   ├── Validate Diff Token Boundaries &amp; Ignore Paths (.lock, .min.js)
-   │
-   ▼
-<strong>[LangGraph StateGraph Engine]</strong>
-   │
-   ├── Initial State: { diff, repo, prNumber, findings: [] }
-   │
-   ├── <strong>PARALLEL AGENT EXECUTION (Concurrently Branched):</strong>
-   │   ├── 🛡️ <strong>Security Agent</strong>: Secret leaks, OWASP Top 10, sanitization
-   │   ├── ⚡ <strong>Performance Agent</strong>: N+1 queries, memory leaks, event loop blocks
-   │   ├── 📐 <strong>Architecture Agent</strong>: Coupling, SOLID principles, layer leakage
-   │   ├── 💎 <strong>Quality Agent</strong>: Code smells, edge cases, type safety
-   │   └── 🐳 <strong>DevOps Agent</strong>: Dockerfile lint, CI/CD impact, env drift
-   │
-   ├── <strong>State Reducer Channel:</strong> Merges findings atomically into shared state
-   │
-   ▼
-<strong>[Consensus &amp; Synthesis Aggregator Node]</strong>
-   ├── Deduplicate redundant suggestions across agents
-   ├── Filter findings below 75% confidence threshold
-   └── Synthesize markdown report with collapsible file diff tables
-   │
-   ▼
-<strong>[Octokit Pull Request Review Comment API]</strong>
-   ├── Post review summary comment on PR
-   ├── Store review telemetry in MongoDB
-   └── Stream real-time completion event via Socket.IO
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Webhook Ingress &amp; Replay-Proof Queueing</h3>
+                </div>
+                <span class="state-card-sla">&lt; 40ms Immediate Ack</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📥 GitHub Inbound</div>
+                  <p class="state-detail-val">Webhook triggers on <code>pull_request.opened</code> or <code>synchronize</code> with signed payload.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 Cryptographic Ingress</div>
+                  <p class="state-detail-val">Verifies HMAC SHA-256 signature; enforces MongoDB delivery ID uniqueness to prevent replay attacks.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Decoupled Enqueue</div>
+                  <p class="state-detail-val">Pushes job into BullMQ (Redis) and returns <code>HTTP 202 Accepted</code> instantly to prevent GitHub webhook timeouts.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Diff Tokenization &amp; Scope Boundary Filtering</h3>
+                </div>
+                <span class="state-card-sla">Sub-200ms Preparation</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🐙 Octokit Fetch</div>
+                  <p class="state-detail-val">BullMQ worker assumes GitHub App installation JWT to fetch complete PR diff and commit metadata.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🧹 Context Pruning</div>
+                  <p class="state-detail-val">Automatically strips lockfiles (<code>package-lock.json</code>), minified scripts, and binaries to conserve token window.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📊 State Initialization</div>
+                  <p class="state-detail-val">Seeds LangGraph memory state with normalized unified diffs and an empty typed findings array.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Parallel Multi-Agent StateGraph Execution</h3>
+                </div>
+                <span class="state-card-sla">6–12s Concurrent Inference</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🤖 Concurrent Fan-Out</div>
+                  <p class="state-detail-val">5 specialized agents (Security, Performance, Architecture, Quality, DevOps) execute in parallel threads.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎯 Schema Enforcement</div>
+                  <p class="state-detail-val">Structured output parsing via Zod validates line numbers, rule categories, severity, and suggested patch diffs.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔄 Thread-Safe Reducer</div>
+                  <p class="state-detail-val">LangGraph's state reducer merges findings asynchronously into the shared state without data clobbering.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Consensus Aggregation &amp; PR Review Egress</h3>
+                </div>
+                <span class="state-card-sla">&lt; 500ms Synthesis &amp; Dispatch</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔍 Deduplication &amp; Confidence</div>
+                  <p class="state-detail-val">Aggregator eliminates overlapping suggestions and filters out findings with confidence scores below 75%.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💬 GitHub API Egress</div>
+                  <p class="state-detail-val">Submits inline multi-line review comments and a structured markdown summary report directly to the PR.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📈 Telemetry &amp; Sockets</div>
+                  <p class="state-detail-val">Archives latency and token telemetry in MongoDB; broadcasts completion event to dashboard via Socket.IO.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

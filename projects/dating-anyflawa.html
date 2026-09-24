@@ -124,15 +124,114 @@
 
         <!-- Section 2 -->
         <section class="case-section">
-          <h2>2. Real-Time Chat &amp; Presence Architecture</h2>
+          <h2>2. Real-Time Chat &amp; Matchmaking Lifecycle</h2>
           <p>
-            Matched users communicate over a scalable WebSocket pipeline featuring:
+            The platform orchestrates geospatial discovery and real-time interaction across four decoupled lifecycle phases:
           </p>
-          <ul>
-            <li><strong>Ephemeral Presence &amp; Typing Indicators</strong>: Heartbeat liveness and typing states are tracked exclusively via Redis key TTLs without database writes.</li>
-            <li><strong>Offline Message Queuing &amp; Push</strong>: When a recipient is offline, messages are persisted in MongoDB and dispatched via Firebase Cloud Messaging (FCM) / Apple APNs.</li>
-            <li><strong>Direct S3 Pre-Signed Uploads</strong>: Multimedia attachments (photos, voice notes) upload directly to AWS S3 using short-lived pre-signed URLs, relieving backend servers from handling large file streams.</li>
-          </ul>
+
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Geospatial Ingress &amp; Proximity Filtering</h3>
+                </div>
+                <span class="state-card-sla">&lt; 5ms Redis GEOSEARCH</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📍 Coordinate Ingress</div>
+                  <p class="state-detail-val">Mobile app transmits lat/long coordinates on movement; indexed into memory using Redis <code>GEOADD</code>.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔍 Fast Radius Search</div>
+                  <p class="state-detail-val"><code>GEOSEARCH</code> extracts nearby user IDs within a 1km–50km radius in microseconds without disk I/O.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎯 Compound Filter</div>
+                  <p class="state-detail-val">Pipes candidate IDs into MongoDB compound indexes to filter demographic preferences, age, and interests.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Atomic Swipe &amp; Mutual Match Engine</h3>
+                </div>
+                <span class="state-card-sla">Sub-10ms Match Detection</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">👆 Swipe Action</div>
+                  <p class="state-detail-val">Client submits like/pass swipe event via WebSocket, buffered into user interaction Redis sets.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Mutual Match Check</div>
+                  <p class="state-detail-val">Executes atomic <code>SISMEMBER</code> test to verify if target user previously liked the caller.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎉 Instant Dual Broadcast</div>
+                  <p class="state-detail-val">On mutual match, creates chat room and broadcasts celebratory match payloads simultaneously to both devices.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Ephemeral Presence &amp; Typing Indicator Loop</h3>
+                </div>
+                <span class="state-card-sla">Zero Database Writes</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💓 Socket Heartbeat</div>
+                  <p class="state-detail-val">Client transmits 25-second heartbeats refreshing Redis key TTLs to track live online/offline presence.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💬 Typing Indicators</div>
+                  <p class="state-detail-val">Active typing events emit over Redis Pub/Sub channels with 5-second automatic TTL expiration.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔋 Mobile Battery Saver</div>
+                  <p class="state-detail-val">Throttles redundant presence updates to minimize mobile radio wakeups and prolong device battery life.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">In-Flight Chat Delivery &amp; Push Notification</h3>
+                </div>
+                <span class="state-card-sla">Sub-100ms Delivery SLA</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🚀 Real-Time Socket Egress</div>
+                  <p class="state-detail-val">Directly delivers messages to connected recipient socket room with client-side read-receipt confirmation.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📲 FCM / APNs Push Fallback</div>
+                  <p class="state-detail-val">If recipient is offline, enqueues push notification through Firebase Cloud Messaging and Apple APNs.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">☁️ Direct S3 Media Pre-Sign</div>
+                  <p class="state-detail-val">Voice notes and photos upload directly to AWS S3 via pre-signed URLs, keeping server bandwidth free.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- Section 3 -->

@@ -120,12 +120,114 @@
 
         <!-- Section 2 -->
         <section class="case-section">
-          <h2>2. The Draw Execution &amp; Ticket Validation Flow</h2>
-          <ul>
-            <li><strong>Ticket Serialization &amp; Tamper-Proofing</strong>: Every ticket receives a cryptographic hash upon purchase, binding selected numbers, user wallet ID, timestamp, and target draw ID to prevent counterfeit claims.</li>
-            <li><strong>Distributed Lock Safeguard</strong>: When scheduled draw times trigger, background worker nodes compete for a Redis distributed lock. Only the single victorious worker can execute the draw sequence, preventing split-brain double draws across clustered servers.</li>
-            <li><strong>Parallel Prize Evaluation</strong>: Millions of purchased combinations are evaluated against the winning draw numbers using batch bitmask operations in memory, distributing fixed and progressive jackpot tiers into player accounts within seconds.</li>
-          </ul>
+          <h2>2. Complete Draw Lifecycle &amp; State Engine</h2>
+          <p>
+            The lottery engine enforces strict audit-compliant state transitions, guaranteeing that ticket pools are locked and evaluated with zero split-brain execution across distributed workers:
+          </p>
+
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Ticket Ingress &amp; Cryptographic Hash Serialization</h3>
+                </div>
+                <span class="state-card-sla">&lt; 20ms Purchase Ack</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎟️ Ticket Purchase</div>
+                  <p class="state-detail-val">Players submit single or syndicate tickets; validated against draw rules and price schedules.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 SHA-256 Hash Seal</div>
+                  <p class="state-detail-val">Every ticket generates an immutable hash binding numbers, user ID, timestamp, and target Draw ID.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Atomic Reservation</div>
+                  <p class="state-detail-val">Debits wallet balances atomically via Redis, enqueuing ticket documents to MongoDB via bulk operations.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Draw Lock Acquisition &amp; Pool Freezing</h3>
+                </div>
+                <span class="state-card-sla">Redlock Mutex &lt; 5ms</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⏰ Precision Scheduler</div>
+                  <p class="state-detail-val">BullMQ cron workers trigger draw closure at the exact scheduled second, rejecting subsequent purchases.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛡️ Redlock Mutex</div>
+                  <p class="state-detail-val">Nodes compete for an exclusive Redis distributed lock; prevents split-brain duplicate draws across cluster instances.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">❄️ Immutable Snapshot</div>
+                  <p class="state-detail-val">Freezes the active ticket pool and transitions draw state to <code>LOCKED_FOR_EVALUATION</code>.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Fortuna PRNG Ball Selection &amp; Audit Trail</h3>
+                </div>
+                <span class="state-card-sla">Certified Cryptographic Draw</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎲 Cryptographic Draw</div>
+                  <p class="state-detail-val">Fortuna PRNG extracts winning ball sequences and bonus numbers under strict entropy seed initialization.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📜 Audit Trail Proof</div>
+                  <p class="state-detail-val">Generates an HMAC digital signature of the drawn numbers, committing the hash to an unalterable audit ledger.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📡 Live Broadcast</div>
+                  <p class="state-detail-val">Streams drawn numbers ball-by-ball in real-time to active player sessions and TV displays via Socket.IO.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Bitmask Prize Matrix &amp; Tiered Wallet Credit</h3>
+                </div>
+                <span class="state-card-sla">Millions Checked in &lt; 3s</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Fast Bitmask Scan</div>
+                  <p class="state-detail-val">Maps ticket numbers into 64-bit integer masks, matching millions of entries against drawn numbers in RAM.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🏆 Tier &amp; Jackpot Split</div>
+                  <p class="state-detail-val">Allocates fixed prizes and computes pari-mutuel progressive jackpot shares across confirmed winner brackets.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💰 Atomic Wallet Credit</div>
+                  <p class="state-detail-val">Credits prize payouts directly to player wallets and triggers automated winner notification queues in RabbitMQ.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- Section 3 -->

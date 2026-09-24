@@ -138,34 +138,113 @@
 
         <!-- Section 3 -->
         <section class="case-section">
-          <h2>3. Real-Time Round Lifecycle &amp; State Engine</h2>
+          <h2>3. Real-Time Round Lifecycle &amp; State Machine</h2>
           <p>
-            The game loop executes via an in-memory high-precision timer decoupled from database I/O to guarantee zero latency jitter:
+            The game loop executes via an in-memory high-precision timer decoupled from database I/O, guaranteeing zero latency jitter across thousands of concurrent players:
           </p>
 
-          <div class="code-preview-box">
-<span class="code-comment"># Real-Time Crash State Loop Topology</span>
-[Phase 1: Wagering Window (6 Seconds)]
-   ├── Accept Bets via WebSocket (Joi Input Sanitization)
-   ├── Atomic User Balance Reservation (Redis DECRBY)
-   └── Broadcast Hashed Server Seed &amp; Active Player List
-         │
-[Phase 2: Ascending Flight Phase (50ms Micro-Tick)]
-   ├── High-Resolution 50ms Tick Loop Driven by Server Clock
-   ├── Broadcast Incremental Multiplier &amp; Live Bets via Socket.IO
-   └── Concurrently Listen for Inbound Player Cashout Requests
-         │
-[Phase 3: Sub-Millisecond Cashout Processing]
-   ├── Evaluate Atomic In-Memory Guard (Round Active &amp; Below Crash Point)
-   ├── Compute Payout Credit &amp; Atomic Ledger Write (Redis Lua Script)
-   └── Broadcast Real-Time Player Cashout Event to Room
-         │
-[Phase 4: Crash Settlement &amp; Cooldown]
-   ├── Target Multiplier Reached ➔ Atomic Transition to CRASHED State
-   ├── Mark All Un-Cashed Bets as BUST
-   ├── Reveal Raw Server Seed for Player Verification
-   ├── Asynchronous MongoDB Flush (Round History, Wins, Financial Ledger)
-   └── 3-Second Cooldown ➔ Initialize Next Round
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Wagering Window &amp; Cryptographic Commitment</h3>
+                </div>
+                <span class="state-card-sla">6-Second Fixed Countdown</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎯 Client Inbound</div>
+                  <p class="state-detail-val">Players submit bet amounts via WebSocket; payload is sanitized using Joi schema validation.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚙️ Engine Concurrency</div>
+                  <p class="state-detail-val">Balances are reserved atomically in Redis (<code>DECRBY</code>) to prevent negative balance race conditions.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 Cryptographic Proof</div>
+                  <p class="state-detail-val">Server computes SHA-256 of Server Seed and broadcasts the hashed commitment to all players before bets close.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Active Flight &amp; Multiplier Tick Loop</h3>
+                </div>
+                <span class="state-card-sla">50ms High-Frequency Ticks</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Real-Time Broadcasting</div>
+                  <p class="state-detail-val">Node.js server clock drives 50ms tick intervals, broadcasting current multiplier and live player counts via Socket.IO.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📡 State Fan-Out</div>
+                  <p class="state-detail-val">Redis Pub/Sub adapter replicates tick events across multi-core Node.js cluster processes with under 15ms latency.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛡️ Threshold Guard</div>
+                  <p class="state-detail-val">Active flight continuously checks if elapsed time has crossed the predetermined deterministic crash point.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Sub-Millisecond Atomic Cashout Ingress</h3>
+                </div>
+                <span class="state-card-sla">&lt; 1ms Processing SLA</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Atomic Execution</div>
+                  <p class="state-detail-val">Cashout claims execute inside a single Redis Lua script, validating round active status and multiplier bounds atomically.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💰 Financial Settlement</div>
+                  <p class="state-detail-val">Calculates winnings (<code>Bet × Current Multiplier</code>) and credits player balance in memory with zero race hazard.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📢 Instant Feedback</div>
+                  <p class="state-detail-val">Pushes cashout acknowledgment to the player and broadcasts the win event to the global table leaderboard.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Crash Resolution, Seed Reveal &amp; Audit</h3>
+                </div>
+                <span class="state-card-sla">3-Second Settlement &amp; Cooldown</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💥 State Transition</div>
+                  <p class="state-detail-val">The instant crash point is reached, state flag transitions to <code>CRASHED</code>; all pending un-cashed bets are marked as bust.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔍 Verifiability</div>
+                  <p class="state-detail-val">The unhashed Server Seed is revealed in the payload, allowing any player to locally verify cryptographic fairness.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💾 Persistence Layer</div>
+                  <p class="state-detail-val">Asynchronously persists round statistics, bets, and ledger balances to MongoDB, then triggers the next round cycle.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

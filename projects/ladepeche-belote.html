@@ -134,30 +134,100 @@
         <!-- Section 3 -->
         <section class="case-section">
           <h2>3. Complete Hand Lifecycle &amp; State Workflow</h2>
+          <p>
+            The Belote round orchestrates server-side trick-taking rules across four deterministic lifecycle phases:
+          </p>
 
-          <div class="code-preview-box">
-<span class="code-comment"># Belote Round Execution State Machine</span>
-[Phase 1: Table Matchmaking &amp; Seating]
-   ├── 4 Real Players or Solo Mode (Empty seats filled by AI bots)
-   └── Rotate Dealer Position &amp; Deal 5 Cards + 1 Face-Up "Retourne Card"
-         │
-[Phase 2: Trump Selection Bidding Loop]
-   ├── Round 1: Players sequentially accept Retourne suit as Trump or Pass
-   ├── Round 2 (If all pass): Pick any of remaining 3 suits as Trump or Pass
-   └── Redeal Trigger: If all 4 pass both rounds ➔ Discard &amp; redeal new hand
-         │
-[Phase 3: Trick Playing Phase (8 Consecutive Tricks)]
-   ├── Deal remaining 3 cards (8 cards total per player hand)
-   ├── Turn-by-turn move validation: Must follow suit; mandatory overtrump
-   ├── Evaluate Trick Winner ➔ Collect trick points ➔ Lead next trick
-   └── Belote/Rebelote Detection: +20 bonus points for holding King &amp; Queen of Trump
-         │
-[Phase 4: Contract Scoring &amp; Settlement]
-   ├── Sum Trick Points + 10 Bonus for Last Trick ("Dix de Der")
-   ├── Validate Contract: Did taking team reach &gt;= 82 points?
-   │   ├── Contract Passed: Both teams retain earned points
-   │   └── Contract Failed ("Dedans"): Opponents awarded all 162 round points
-   └── Match Target: First team to reach &gt; 501 points wins match ➔ Notify Gamify API
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Table Matchmaking &amp; Initial Deal</h3>
+                </div>
+                <span class="state-card-sla">2v2 Partnership Assembly</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🪑 Player Seating</div>
+                  <p class="state-detail-val">Matches 4 human players in 2 opposing partnerships (North-South vs. East-West). Solo mode seats AI bots in vacant positions.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🃏 Initial 5-Card Deal</div>
+                  <p class="state-detail-val">Deals 5 initial cards to each participant and exposes one face-up "Retourne Card" on the table to initiate bidding.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Two-Round Trump Bidding Engine</h3>
+                </div>
+                <span class="state-card-sla">Clockwise Turn Progression</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎯 Round 1: Retourne Suit</div>
+                  <p class="state-detail-val">Each player evaluates their hand; can choose to take the Retourne suit as Trump or Pass to the next seated player.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔄 Round 2 &amp; Redeal Check</div>
+                  <p class="state-detail-val">If all pass Round 1, players can select any of the remaining 3 suits. If all pass Round 2, the hand is voided and redealt automatically.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">8 Consecutive Trick Evaluations</h3>
+                </div>
+                <span class="state-card-sla">Strict Move Legality Validation</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚖️ Rule Enforcement</div>
+                  <p class="state-detail-val">Enforces leading suit follow rules and mandatory overtrumping (Monter à l'atout); rejects invalid client card moves.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🏆 Trick Resolution</div>
+                  <p class="state-detail-val">Evaluates the highest played trump or leading suit card, transfers trick points to winner, and assigns trick lead for next turn.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">👑 Belote / Rebelote Bonus</div>
+                  <p class="state-detail-val">Tracks King and Queen of trump declarations in sequence, automatically registering +20 bonus points for the team.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Contract Scoring, Dedans &amp; Gamify Egress</h3>
+                </div>
+                <span class="state-card-sla">82-Point Contract Validation</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📊 82-Point Math Check</div>
+                  <p class="state-detail-val">Contract team must score ≥ 82 points out of 162 total points. Failure (Dedans) forfeits all 162 points to the defending team.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🌐 Gamify API Sync</div>
+                  <p class="state-detail-val">Accumulates scores across rounds until 501 points. Dispatches final match results, tournament standings, and wallet payouts to the client's Gamify API.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

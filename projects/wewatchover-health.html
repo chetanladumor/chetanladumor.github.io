@@ -122,33 +122,108 @@
         <section class="case-section">
           <h2>2. Real-Time Telemetry Pipeline &amp; Alert Workflow</h2>
 
-          <div class="code-preview-box">
-<span class="code-comment"># WeWatchOver Real-Time Biometric Pipeline</span>
-[Patient Smartwatch (Fitbit / Oura / E88)]
-   │
-   ├── Bluetooth Low Energy (BLE) Sync ➔ Patient Mobile App (iOS / Android)
-   │
-   ▼ HTTPS / WSS Streaming Ingestion
-[Node.js Ingestion Service]
-   │
-   ├── Parse Telemetry: { heartRate, spO2, temp, gpsCoordinates, battery }
-   ├── In-Memory Deduplication &amp; Timeseries Buffering in Redis
-   └── Async Batch Write to MongoDB Timeseries Collections
-   │
-   ▼
-[Rule-Based Anomaly Detection Engine]
-   │
-   ├── Check Threshold 1: Heart Rate &gt; 130 BPM or &lt; 45 BPM (Cardiac Anomaly)
-   ├── Check Threshold 2: Blood Oxygen (SpO2) &lt; 90% (Hypoxemia Alert)
-   ├── Check Threshold 3: Sudden Fall / Accelerometer Shock Vector
-   │
-   ├── <strong>IF NORMAL</strong> ➔ Stream live vitals to Doctor Dashboard via Socket.IO
-   │
-   └── <strong>IF ANOMALY DETECTED</strong>:
-         ├── 1. Generate Priority Emergency Alarm in MongoDB
-         ├── 2. Dispatch Priority SMS via Twilio to Family &amp; Doctor
-         │      (Includes patient name, exact vitals, and live Google Maps GPS link)
-         └── 3. Trigger Auditory &amp; Visual Flashing Alarm on Caregiver Web Dashboard
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Continuous Edge Ingestion &amp; BLE Sync</h3>
+                </div>
+                <span class="state-card-sla">5-Sec Mobile Ingress Buffer</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⌚ Wearable Telemetry</div>
+                  <p class="state-detail-val">Fitbit, Oura, and E88 sensors stream HR, SpO2, skin temp, and accelerometer data via BLE to the mobile app.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📶 Gateway Streaming</div>
+                  <p class="state-detail-val">Mobile app packages telemetry and streams over TLS WebSocket / HTTPS to the Node.js ingestion gateway.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ In-Memory Buffering</div>
+                  <p class="state-detail-val">Telemetry packets buffer into Redis sorted sets, absorbing intermittent mobile cellular network drops without packet loss.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">In-Memory Anomaly Detection &amp; Rule Checks</h3>
+                </div>
+                <span class="state-card-sla">Sub-10ms Rule Engine</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">❤️ Cardiac Thresholds</div>
+                  <p class="state-detail-val">Evaluates acute tachycardia (&gt; 130 BPM) or bradycardia (&lt; 45 BPM) against customized patient baselines.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🫁 Hypoxemia &amp; Fall Vector</div>
+                  <p class="state-detail-val">Detects blood oxygen drops (SpO2 &lt; 90%) and sudden 3-axis accelerometer shock vectors characteristic of physical falls.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🧹 Noise De-glitching</div>
+                  <p class="state-detail-val">Applies a 3-point rolling median filter to suppress motion artifacts and transient false positives before tripping alarms.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Multi-Channel Priority Emergency Dispatch</h3>
+                </div>
+                <span class="state-card-sla">&lt; 2s Critical Alert SLA</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🚨 Twilio SMS Escalation</div>
+                  <p class="state-detail-val">Dispatches priority emergency SMS with vital reading snapshot and dynamic Google Maps location link to caregivers.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📞 Automated IVR Calling</div>
+                  <p class="state-detail-val">If SMS unacknowledged within 60 seconds, automated phone call escalation dials primary contacts to ensure response.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🗺️ Precision Geocoding</div>
+                  <p class="state-detail-val">Binds latest GPS latitude/longitude and battery status into emergency ticket for first responders and family.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Timeseries Persistence &amp; Dashboard Streaming</h3>
+                </div>
+                <span class="state-card-sla">Sub-100ms Live Telemetry</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📊 Socket.IO Live Fan-Out</div>
+                  <p class="state-detail-val">Normal and anomalous vitals stream directly to doctor and caregiver dashboard views with sub-100ms UI latency.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔔 Visual &amp; Audio Alarms</div>
+                  <p class="state-detail-val">Tripped anomalies trigger flashing red workstation alerts with persistent audio tones until physician clears ticket.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💾 Timeseries Archiving</div>
+                  <p class="state-detail-val">Flushes Redis telemetry in micro-batches to MongoDB timeseries collections with 90-day automated TTL indexing.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

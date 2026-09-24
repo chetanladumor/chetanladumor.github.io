@@ -120,59 +120,109 @@
 
         <!-- Section 2 -->
         <section class="case-section">
-          <h2>2. The 6-Stage Hybrid RAG Pipeline</h2>
+          <h2>2. Hybrid RAG Inference Lifecycle &amp; State Engine</h2>
           
-          <div class="workflow-steps-list">
-            <div class="workflow-step-card">
-              <div class="workflow-step-num">1</div>
-              <h3 class="workflow-step-title">Query Rewriting &amp; Intent Distillation</h3>
-              <p>
-                Customer questions often contain conversational clutter. An ultra-fast local LLM step distills noisy user messages into search-optimized queries while extracting named entities (order IDs, product models, error codes).
-              </p>
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Query Ingress, Intent Distillation &amp; Multi-Tenant Pre-Filter</h3>
+                </div>
+                <span class="state-card-sla">&lt; 40ms Ingress &amp; Parse</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💬 Noisy Query Cleanup</div>
+                  <p class="state-detail-val">Local LLM step strips conversational filler and extracts key entities (order numbers, SKU codes, error IDs).</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 Hard Tenant Boundaries</div>
+                  <p class="state-detail-val">Applies strict SQL pre-filtering on <code>tenantId</code> and role policies, eliminating cross-tenant leakage.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Embedding Generation</div>
+                  <p class="state-detail-val">Generates 1536-dimensional dense query vector via localized embedding pipeline.</p>
+                </div>
+              </div>
             </div>
 
-            <div class="workflow-step-card">
-              <div class="workflow-step-num">2</div>
-              <h3 class="workflow-step-title">Multi-Tenant Hard Filtering</h3>
-              <p>
-                Before executing any vector calculations, the database query applies hard SQL filters on <code>tenantId</code> and role-based access control. Pre-filtering guarantees enterprise data boundary isolation while reducing memory search space.
-              </p>
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Simultaneous Dual Retrieval: HNSW pgvector + Lexical GIN</h3>
+                </div>
+                <span class="state-card-sla">&lt; 15ms Parallel Query</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🧠 Dense Semantic Search</div>
+                  <p class="state-detail-val">Executes cosine distance calculation on <code>pgvector</code> using multi-layer HNSW graph indexing (&gt;98% recall).</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔍 Sparse Keyword Matching</div>
+                  <p class="state-detail-val">Runs BM25-equivalent full-text search against PostgreSQL GIN indexes on precomputed <code>search_vector</code> tsvectors.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Unified CTE Query</div>
+                  <p class="state-detail-val">Combines vector similarity and lexical ranking inside a single SQL query with Common Table Expressions.</p>
+                </div>
+              </div>
             </div>
 
-            <div class="workflow-step-card">
-              <div class="workflow-step-num">3</div>
-              <h3 class="workflow-step-title">Simultaneous Hybrid Retrieval (Vector + Keyword)</h3>
-              <p>
-                Executed within a single PostgreSQL query utilizing Common Table Expressions (CTEs):
-              </p>
-              <ul>
-                <li><strong>Dense Semantic Search</strong>: Uses <code>pgvector</code> with an <strong>HNSW (Hierarchical Navigable Small World)</strong> index to measure cosine similarity across embeddings.</li>
-                <li><strong>Sparse Lexical Search</strong>: Uses PostgreSQL's <strong>GIN index</strong> on a precomputed <code>search_vector</code> column to capture exact part numbers and SKU codes.</li>
-              </ul>
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Reciprocal Rank Fusion &amp; Cross-Encoder Attention</h3>
+                </div>
+                <span class="state-card-sla">&lt; 50ms Re-Ranking SLA</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚖️ Scale-Invariant RRF</div>
+                  <p class="state-detail-val">Merges disparate vector scores and lexical TF-IDF ranks using reciprocal rank fusion, eliminating score bias.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎯 Cross-Encoder Attention</div>
+                  <p class="state-detail-val">Performs joint token-level query-document attention over the top candidates to isolate the 2 most authoritative chunks.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛡️ Hallucination Guard</div>
+                  <p class="state-detail-val">Rejects context chunks scoring below 80% relevance threshold, prompting fallback to live human agent handoff.</p>
+                </div>
+              </div>
             </div>
 
-            <div class="workflow-step-card">
-              <div class="workflow-step-num">4</div>
-              <h3 class="workflow-step-title">Reciprocal Rank Fusion (RRF) Reranking</h3>
-              <p>
-                Because cosine distance and full-text TF-IDF scores operate on incompatible mathematical scales, raw score addition causes severe bias. The system applies Reciprocal Rank Fusion, evaluating candidates purely by their relative ranking in both candidate lists to generate a balanced, scale-invariant top candidate set.
-              </p>
-            </div>
+            <div class="state-flow-connector">↓</div>
 
-            <div class="workflow-step-card">
-              <div class="workflow-step-num">5</div>
-              <h3 class="workflow-step-title">Cross-Encoder Re-Ranking Stage</h3>
-              <p>
-                The top candidate chunks are processed through a cross-encoder model. Unlike bi-encoders that process queries and documents separately, the cross-encoder performs joint token-level attention between query and context, isolating the top 2 most authoritative chunks.
-              </p>
-            </div>
-
-            <div class="workflow-step-card">
-              <div class="workflow-step-num">6</div>
-              <h3 class="workflow-step-title">Grounded Generation with Traceable Citations</h3>
-              <p>
-                The curated context is assembled into a token-bounded prompt with strict grounding constraints. Responses stream to the user via <strong>Server-Sent Events (SSE)</strong>, complete with clickable citation chips linking directly to source article IDs.
-              </p>
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Grounded LLM Generation &amp; SSE Stream Egress</h3>
+                </div>
+                <span class="state-card-sla">&lt; 100ms Time-to-First-Token</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📜 Grounded Prompts</div>
+                  <p class="state-detail-val">Injects retrieved chunks into strict system prompt templates enforcing verifiable factual assertions.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🌊 Real-Time SSE Stream</div>
+                  <p class="state-detail-val">Streams markdown tokens back to the user via Server-Sent Events (SSE) for zero perceived interface lag.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🏷️ Traceable Citation Chips</div>
+                  <p class="state-detail-val">Appends interactive citation badges linking directly to specific knowledge base doc IDs and change histories.</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>

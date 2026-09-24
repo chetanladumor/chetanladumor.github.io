@@ -140,43 +140,97 @@
 
         <!-- Section 3 -->
         <section class="case-section">
-          <h2>3. Distributed Real-Time Architecture</h2>
+          <h2>3. Distributed Real-Time Synchronization Pipeline</h2>
           <p>
-            To prevent single points of failure and scale across thousands of concurrent players, the backend was designed as a <strong>stateless Node.js cluster</strong> decoupled via Redis:
+            To prevent clock drift and maintain sub-100ms synchronization across 40+ physical bingo venues and mobile players, the draw lifecycle operates across four distributed stages:
           </p>
 
-          <div class="code-preview-box">
-<span class="code-comment"># Spillorama Distributed Synchronization Topology</span>
-[40+ Physical TV Screen Clients]       [Web &amp; Mobile Players (iOS/Android)]
-              │                                      │
-              └──────────────────┬───────────────────┘
-                                 │ WSS (Encrypted WebSockets)
-                                 ▼
-                    [Nginx Load Balancer with Sticky Routing]
-                                 │
-         ┌───────────────────────┼───────────────────────┐
-         ▼                       ▼                       ▼
-  [Node.js Worker 1]      [Node.js Worker 2]      [Node.js Worker N]
-         │                       │                       │
-         └───────────────────────┼───────────────────────┘
-                                 │
-                   <strong>[Redis Pub/Sub Socket.IO Adapter]</strong>
-                   (Cross-Node State Sync &amp; Room Broadcasts)
-                                 │
-             ┌───────────────────┴───────────────────┐
-             ▼                                       ▼
-  <strong>[Distributed Redlock Mutex]</strong>             <strong>[BullMQ Job Queues &amp; ZSET]</strong>
-  (SETNX / Lua Atomic Guard)             (Sub-second Ball Draw Timing)
-             │                                       │
-             └───────────────────┬───────────────────┘
-                                 │
-                                 ▼
-                     [MongoDB &amp; MSSQL Data Tier]
-                     (bulkWrite Batch Ticket Validation)
-                                 │
-                                 ▼
-              [External Providers: Metronia &amp; Ok Bingo]
-              (Real-Time Settlement &amp; Hall Fiscal Auditing)
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Stage 01</span>
+                  <h3 class="state-card-title">Multi-Venue Ingress &amp; Persistent Sockets</h3>
+                </div>
+                <span class="state-card-sla">40+ Physical Venues + Mobile</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📺 Venue TV Displays</div>
+                  <p class="state-detail-val">Overhead display screens in physical bingo halls connect over persistent WSS with Nginx sticky session routing.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📱 Touchscreen Players</div>
+                  <p class="state-detail-val">Mobile and web players maintain live bidirectional Socket.IO sessions subscribed to national game channels.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Stage 02</span>
+                  <h3 class="state-card-title">Central BullMQ Scheduler &amp; Redlock Mutex</h3>
+                </div>
+                <span class="state-card-sla">15-Second Automated Interval</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⏱️ Centralized Clock</div>
+                  <p class="state-detail-val">Internal Node.js timers are replaced with Redis Sorted Sets (ZSET) and BullMQ job queues, eliminating server clock drift.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 Redlock Mutex Guard</div>
+                  <p class="state-detail-val">Cluster workers compete for a Redis distributed lock (<code>SETNX</code> with Lua lease). Only the lock-winning worker triggers the draw, preventing duplicate ball generations.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Stage 03</span>
+                  <h3 class="state-card-title">Cryptographic Ball Draw &amp; Binary Fan-Out</h3>
+                </div>
+                <span class="state-card-sla">&lt; 100ms TV &amp; Mobile Alignment</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎲 Fortuna PRNG</div>
+                  <p class="state-detail-val">Draws candidate balls from the physical pool (75-ball, 21-ball, or 33-ball) using cryptographically secure Fortuna pseudo-random algorithms.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📡 Redis Adapter Broadcast</div>
+                  <p class="state-detail-val">Fires binary-serialized draw events via <code>@socket.io/redis-adapter</code> across multi-node servers, rendering simultaneously on hall TVs and mobile phones.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Stage 04</span>
+                  <h3 class="state-card-title">In-Memory Bitmask Evaluation &amp; bulkWrite Settlement</h3>
+                </div>
+                <span class="state-card-sla">Sub-Second Ticket Reconciliation</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Card Bitmask Checks</div>
+                  <p class="state-detail-val">Node.js workers evaluate tens of thousands of active tickets against winning patterns (1-line, 2-line, Full House) using fast bitwise operations in memory.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💾 MongoDB bulkWrite</div>
+                  <p class="state-detail-val">Winner tickets and jackpot allocations are flushed in batched <code>bulkWrite</code> operations, notifying third-party providers (Metronia &amp; Ok Bingo) for fiscal compliance.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

@@ -140,32 +140,104 @@
         <!-- Section 3 -->
         <section class="case-section">
           <h2>3. Cash Game Hand Lifecycle &amp; State Machine</h2>
-          
-          <div class="code-preview-box">
-<span class="code-comment"># Cash Game Table State Machine Topology</span>
-[Phase 1: Table Matchmaking &amp; Buy-In]
-   ├── Balance Validation → Deduct Wallet → Credit Table Stack
-   └── Seat Assignment &amp; Player Broadcast
-         │
-[Phase 2: Hand Initialization]
-   ├── Rotate Dealer Button, Small Blind (SB), Big Blind (BB)
-   └── Collect Forced Blind Bets → Initialize Main Pot
-         │
-[Phase 3: Cryptographic Card Dealing]
-   ├── Server-Side Cryptographic Deck Shuffle (Fortuna PRNG)
-   └── Deliver Private Hole Cards (Strictly to owning socket connection)
-         │
-[Phase 4: Sequential Betting Rounds (Pre-Flop ➔ Flop ➔ Turn ➔ River)]
-   ├── 30-Second Turn Countdown (Server Authoritative)
-   ├── Validate Action: Fold | Check | Call | Raise | All-In
-   ├── Update Pot &amp; Check Stack Bounds
-   └── If everyone folds ➔ Award pot immediately; Else reveal next board card
-         │
-[Phase 5: Showdown &amp; Pot Distribution]
-   ├── Pokersolver Hand Evaluation
-   ├── Resolve Multi-Tier Side Pots
-   ├── Deduct Rake Commission (with Cap)
-   └── Atomic Credit to Winner Stack &amp; Hand History Log
+          <p>
+            The table state machine executes server-authoritatively across five distinct poker phases, guaranteeing transactional fairness:
+          </p>
+
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Seat Reservation &amp; Buy-In Ingress</h3>
+                </div>
+                <span class="state-card-sla">&lt; 50ms Turnaround</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">👛 Wallet Validation</div>
+                  <p class="state-detail-val">Validates player wallet balance against table minimums; atomically debits user balance and credits table chip stack.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🪑 Seat Assignment</div>
+                  <p class="state-detail-val">Allocates table seat position in Redis table state and broadcasts seat occupancy event to all seated players.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Dealer Button Rotation &amp; Cryptographic Deal</h3>
+                </div>
+                <span class="state-card-sla">Deterministic Fortuna PRNG</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔄 Position Tracking</div>
+                  <p class="state-detail-val">Rotates Dealer Button, Small Blind (SB), and Big Blind (BB) positions; collects mandatory forced bets to seed main pot.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🃏 Card Secrecy</div>
+                  <p class="state-detail-val">Deck is shuffled server-side via Fortuna PRNG. Private hole cards (2 for Hold'em, 4 for Omaha) are delivered strictly to the owning player socket.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Sequential Betting Rounds (Pre-Flop ➔ Flop ➔ Turn ➔ River)</h3>
+                </div>
+                <span class="state-card-sla">30-Second Authoritative Timer</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⏱️ Action Countdown</div>
+                  <p class="state-detail-val">Server-side timer ticks per active seat. If turn expires without input, server forces auto-check or fold.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛡️ Move Validation</div>
+                  <p class="state-detail-val">Validates player action (Fold, Check, Call, Raise, All-In); updates round bets and resolves pot eligibility sets.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🌐 Board Card Reveal</div>
+                  <p class="state-detail-val">When betting rounds complete, reveals Flop (3 cards), Turn (1 card), and River (1 card) simultaneously across sockets.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Showdown, Pokersolver &amp; Side Pot Distribution</h3>
+                </div>
+                <span class="state-card-sla">Instantaneous Hand Resolution</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🧠 Hand Evaluation</div>
+                  <p class="state-detail-val">Evaluates active 5-card hands using Pokersolver, ranking hands from Royal Flush to High Card with automated kicker comparisons.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📐 Side Pot Settlement</div>
+                  <p class="state-detail-val">Evaluates multi-tier side pots in descending stack sequence, ensuring uneven all-in stacks are settled equitably.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📊 Rake &amp; Ledger Log</div>
+                  <p class="state-detail-val">Deducts table rake commission according to club caps, credits winner chip balance, and records hand replay in MongoDB.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

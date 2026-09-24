@@ -131,31 +131,108 @@
             This flow was redesigned into an <strong>asynchronous event-driven microservices topology</strong> orchestrated via Apache Kafka topics and RabbitMQ queues:
           </p>
 
-          <div class="code-preview-box">
-<span class="code-comment"># Decoupled Checkout Event Topology</span>
-[Customer Client] ➔ (POST /api/checkout)
-       │
-       ▼
-[Order Gateway Service]
-       │
-       ├── Validate cart token &amp; signature
-       ├── Write Order record (Status: "PENDING_CONFIRMATION")
-       ├── Publish Event: <strong>`order.created`</strong> to Apache Kafka Topic
-       │
-       ▼ <strong>HTTP 200/202 Response Returned to User (Immediate ~180ms Turnaround)</strong>
-       
-       │
-       ├── <strong>Kafka Consumer: Inventory Service</strong>
-       │   └── Executes atomic reservation in Redis; falls back to PG locking
-       │
-       ├── <strong>Kafka Consumer: Payment Gateway Orchestrator</strong>
-       │   └── Dispatches payment intent to Stripe / Swedbank; publishes `payment.settled`
-       │
-       ├── <strong>Kafka Consumer: Notification Service (RabbitMQ)</strong>
-       │   └── Queues confirmation emails &amp; SMS notifications asynchronously
-       │
-       └── <strong>WebSocket Broadcasting Gateway</strong>
-           └── Pushes real-time order confirmation &amp; live shipping status to client
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Order Gateway Ingress &amp; Asynchronous Ack</h3>
+                </div>
+                <span class="state-card-sla">&lt; 180ms Ingress Turnaround</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛒 Client Inbound</div>
+                  <p class="state-detail-val">Frontend submits checkout cart payload via <code>POST /api/checkout</code> with signed cryptographic HMAC tokens.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📦 Pending Order Row</div>
+                  <p class="state-detail-val">Gateway records initial order entity (<code>PENDING_CONFIRMATION</code>) and produces <code>order.created</code> event to Kafka.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ Non-Blocking Handshake</div>
+                  <p class="state-detail-val">Returns immediate <code>HTTP 202 Accepted</code> with tracking token, liberating client threads from blocking on downstream services.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Atomic Inventory Reservation &amp; Mutex Locking</h3>
+                </div>
+                <span class="state-card-sla">Sub-10ms Redis Mutex</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📊 Kafka Consumer Ingress</div>
+                  <p class="state-detail-val">Inventory microservice consumes <code>order.created</code> partitioned by warehouse region for linear scalability.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 Atomic Redis Lua Script</div>
+                  <p class="state-detail-val">Verifies stock availability and reserves items atomically in memory to guarantee zero flash-sale overselling.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛡️ Idempotent Fallback</div>
+                  <p class="state-detail-val">Executes PostgreSQL row-level locks (<code>SELECT FOR UPDATE</code>) on stock tables within an idempotent database transaction.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Payment Settlement &amp; Saga Compensation</h3>
+                </div>
+                <span class="state-card-sla">1.2–2.5s External PSP SLA</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💳 PSP Orchestration</div>
+                  <p class="state-detail-val">Payment service communicates with Stripe / Swedbank API using idempotent order keys to eliminate duplicate billings.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📢 Topic Event Cascade</div>
+                  <p class="state-detail-val">Successful capture emits <code>payment.settled</code> event across Kafka; declines emit <code>payment.failed</code>.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔄 Saga Rollback Trigger</div>
+                  <p class="state-detail-val">On payment failure, compensating transactions trigger automatic Redis inventory un-reservation back to general stock.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Real-Time State Broadcast &amp; Async Notification</h3>
+                </div>
+                <span class="state-card-sla">Sub-200ms Client Notification</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚡ WebSocket Sync</div>
+                  <p class="state-detail-val">WebSocket cluster pushes live <code>order.confirmed</code> status and invoice summary to the customer's browser session.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📬 RabbitMQ Queuing</div>
+                  <p class="state-detail-val">Notification workers dequeue jobs to generate PDF receipts and dispatch confirmation emails asynchronously.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🗄 Connection Stability</div>
+                  <p class="state-detail-val">PgBouncer transaction pooling sustains under 100 active connections to PostgreSQL under 10,000 req/sec bursts.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

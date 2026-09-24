@@ -120,13 +120,114 @@
 
         <!-- Section 2 -->
         <section class="case-section">
-          <h2>2. The Spin Lifecycle &amp; Paytable Evaluation</h2>
-          <ul>
-            <li><strong>Cryptographic Stop Generation</strong>: A cryptographically secure PRNG generates stop indexes for each virtual reel strip according to configured symbol weighting tables.</li>
-            <li><strong>Payline Mapping</strong>: The resulting 3x5 or 4x5 symbol matrix is evaluated across configured payline patterns (horizontal, diagonal, zigzag) to calculate base game winning combinations in memory.</li>
-            <li><strong>Feature State Machine</strong>: Scatter symbols trigger free spin bonus states with win multipliers, while Wild symbols substitute dynamically across payline checks.</li>
-            <li><strong>Atomic Financial Settlement</strong>: Bet deductions and payout credits execute atomically using in-memory guards to eliminate double-spend risks during high-frequency auto-spin rounds.</li>
-          </ul>
+          <h2>2. Real-Time Spin Lifecycle &amp; State Engine</h2>
+          <p>
+            The backend engine processes the complete spin lifecycle in memory, maintaining sub-20ms roundtrip execution for fluid 60 FPS slot animations:
+          </p>
+
+          <div class="state-flow-pipeline">
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 01</span>
+                  <h3 class="state-card-title">Bet Ingress &amp; Atomic Balance Lock</h3>
+                </div>
+                <span class="state-card-sla">&lt; 2ms In-Memory Mutex</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎰 Client Trigger</div>
+                  <p class="state-detail-val">Frontend dispatches spin action over WebSocket specifying coin denomination and selected paylines.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔒 Redis Atomic Debit</div>
+                  <p class="state-detail-val">Lua script checks balance and deducts total bet atomically, eliminating double-spend race conditions.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🛡️ Active Spin Mutex</div>
+                  <p class="state-detail-val">Locks user session in Redis to reject overlapping spin requests during high-frequency auto-spin cycles.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 02</span>
+                  <h3 class="state-card-title">Cryptographic Reel Stop Generation</h3>
+                </div>
+                <span class="state-card-sla">Sub-1ms Fortuna PRNG</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🎲 Certified PRNG</div>
+                  <p class="state-detail-val">Fortuna PRNG generates cryptographically random seeds mapped against certified virtual reel strip weights.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📐 Matrix Assembly</div>
+                  <p class="state-detail-val">Extracts top, middle, and bottom symbol rows across 5 reels to assemble the active 3x5 matrix buffer.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">⚖️ RTP Compliance</div>
+                  <p class="state-detail-val">Reel weighting models ensure exact statistical compliance with certified 96.5% Return-to-Player mathematical specifications.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 03</span>
+                  <h3 class="state-card-title">Payline Scan &amp; Bonus State Machine</h3>
+                </div>
+                <span class="state-card-sla">Sub-5ms Matrix Evaluation</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔍 Payline Traversal</div>
+                  <p class="state-detail-val">Evaluates configured payline vectors (horizontal, diagonal, zigzag) from left to right with Wild substitutions.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🌟 Scatter &amp; Free Spins</div>
+                  <p class="state-detail-val">Detects 3+ Scatter symbols to transition player state into the Free Spins bonus mode with cascading multipliers.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔢 Exact Precision Math</div>
+                  <p class="state-detail-val">Calculates win multiples using arbitrary precision arithmetic to eliminate IEEE-754 floating-point discrepancies.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="state-flow-connector">↓</div>
+
+            <div class="state-card">
+              <div class="state-card-header">
+                <div class="state-card-title-wrap">
+                  <span class="state-card-step">Phase 04</span>
+                  <h3 class="state-card-title">Wallet Settlement &amp; Animation Egress</h3>
+                </div>
+                <span class="state-card-sla">&lt; 15ms Round-Trip Response</span>
+              </div>
+              <div class="state-details-grid">
+                <div class="state-detail-item">
+                  <div class="state-detail-label">💰 Atomic Settlement</div>
+                  <p class="state-detail-val">Credits winning payouts directly to wallet in Redis, scheduling background audit ledger writes to MongoDB.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">📡 Frontend Frame Egress</div>
+                  <p class="state-detail-val">Transmits reel stop indices, winning payline coordinate masks, win amounts, and updated balance to client.</p>
+                </div>
+                <div class="state-detail-item">
+                  <div class="state-detail-label">🔓 Mutex Release</div>
+                  <p class="state-detail-val">Releases player spin lock, allowing client UI to initiate next spin immediately upon reel stop animation completion.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- Section 3 -->
