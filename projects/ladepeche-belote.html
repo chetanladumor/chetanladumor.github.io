@@ -79,7 +79,19 @@
           A server-authoritative multiplayer Belote card platform with intelligent AI bot decision logic, complex trick-taking move validation, 82-point contract math, and headless integration into an international gaming portal via Gamify APIs.
         </p>
 
-        <div class="case-meta-grid">
+        <div style="margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+          <a href="https://belote.mygamify.fr/" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Play Live Game on MyGamify ↗
+          </a>
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-mono);">Live: https://belote.mygamify.fr/</span>
+        </div>
+
+        <div class="case-meta-grid" style="margin-top: 1.5rem;">
+          <div>
+            <div class="meta-label">Live Platform</div>
+            <div class="meta-val"><a href="https://belote.mygamify.fr/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan); text-decoration: underline;">belote.mygamify.fr ↗</a></div>
+          </div>
           <div>
             <div class="meta-label">Game Topology</div>
             <div class="meta-val">Solo (with AI Bots), Multiplayer 2v2 &amp; Tournaments</div>
@@ -128,6 +140,7 @@
             <li><strong>Session Authentication</strong>: When a player joins a table, the backend validates the user's JWT launch token against the client's central Gamify API to obtain player profiles, wallet balances, and game permissions.</li>
             <li><strong>Bi-Directional Financial Sync</strong>: Tournament entry fees, in-game wagers, and final prize allocations are synchronized via RESTful webhooks to the client's central ledger with automated idempotency keys.</li>
             <li><strong>Decoupled Scalability</strong>: This architecture enabled the client to retain complete ownership over their user database while delegating all real-time game state synchronization to our Node.js cluster.</li>
+            <li><strong>Live Production Deployment</strong>: The production platform is actively deployed and accessible at <a href="https://belote.mygamify.fr/" target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan); text-decoration: underline;">https://belote.mygamify.fr/</a>, delivering real-time French Belote matchmaking to thousands of concurrent users.</li>
           </ul>
         </section>
 
@@ -300,7 +313,10 @@
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
             Whether you need server-authoritative card logic, bot AI, or third-party gaming engine integrations, let's connect.
           </p>
-          <a href="../index.html#contact" class="btn btn-primary btn-lg">Get in Touch with Chetan</a>
+          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="../index.html#contact" class="btn btn-primary btn-lg">Get in Touch with Chetan</a>
+            <a href="https://belote.mygamify.fr/" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: var(--border-medium); display: inline-flex; align-items: center; gap: 0.5rem;">Play Live Game (belote.mygamify.fr) ↗</a>
+          </div>
         </div>
       </div>
     </article>

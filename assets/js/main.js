@@ -159,6 +159,7 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'Express', 'Socket.IO', 'MongoDB', 'Redis', 'Gamify API Gateway', 'Heuristic AI Bots', 'PM2', 'Docker'],
     skills: ['node.js', 'express.js', 'socket.io', 'mongodb', 'redis', 'gamify api', 'ai bots', 'belote', 'gaming', 'state machines'],
     metrics: 'Strict Server-Authoritative Card Rules | 2v2 Real-Time Room Orchestration | Instant Reconnection Resumption',
+    liveUrl: 'https://belote.mygamify.fr/',
   },
   {
     id: 'slot-game',
@@ -275,6 +276,7 @@ function renderProjects(items) {
             In-Depth Case Study <span>→</span>
           </a>
           <div class="project-external-links">
+            ${proj.liveUrl ? `<a href="${proj.liveUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="Play Live Game (${proj.liveUrl})" aria-label="Play Live Game">🌐</a>` : ''}
             ${proj.youtubeUrl ? `<a href="${proj.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="Watch Video Demo" aria-label="YouTube Demo">📺</a>` : ''}
             ${proj.githubUrl ? `<a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="View Source on GitHub" aria-label="GitHub Repo">🐙</a>` : ''}
             <button onclick="openProjectModal('${proj.id}')" class="project-ext-icon" title="Quick Architecture Modal" style="background: none; border: none; cursor: pointer; font-size: 1.05rem;" aria-label="Quick Modal">🔍</button>
@@ -437,9 +439,14 @@ window.openProjectModal = function(projectId) {
   const liveAction = document.getElementById('modal-live-btn');
   const gitAction = document.getElementById('modal-git-btn');
 
-  if (proj.youtubeUrl) {
+  if (proj.liveUrl) {
+    liveAction.style.display = 'inline-flex';
+    liveAction.href = proj.liveUrl;
+    liveAction.textContent = 'Play Live Game 🌐';
+  } else if (proj.youtubeUrl) {
     liveAction.style.display = 'inline-flex';
     liveAction.href = proj.youtubeUrl;
+    liveAction.textContent = 'Watch Video Demo 📺';
   } else {
     liveAction.style.display = 'none';
   }
