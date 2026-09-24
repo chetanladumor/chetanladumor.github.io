@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404: Architecture Route Not Found | Chetan V. Ladumor</title>
+  <meta name="description" content="The requested page or case study does not exist. Explore Chetan Ladumor's high-concurrency Node.js, WebSocket, and AI engineering architecture case studies.">
+  <meta name="robots" content="noindex, follow">
+  
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+  <meta name="theme-color" content="#0b1120">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=3">
+
+  <style>
+    .error-wrapper {
+      min-height: calc(100vh - 160px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 1.5rem 3rem;
+    }
+    .error-card {
+      max-width: 780px;
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 3rem 2.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      position: relative;
+      overflow: hidden;
+    }
+    .error-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple), var(--accent-emerald));
+    }
+    .error-code {
+      font-family: var(--font-mono);
+      font-size: clamp(4rem, 12vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.04em;
+    }
+    .error-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #f43f5e;
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+    }
+    .error-title {
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.8rem;
+    }
+    .error-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.6;
+    }
+    .redirect-timer-box {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: var(--radius-md);
+      padding: 0.6rem 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .error-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .quick-routes {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 2rem;
+      text-align: left;
+    }
+    .quick-routes-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .routes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+    }
+    .route-item {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.9rem;
+      text-decoration: none;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all var(--transition-fast);
+    }
+    .route-item:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      transform: translateX(3px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="index.html" class="nav-brand" aria-label="Chetan Ladumor Home">
+          <img src="assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="index.html#projects" class="nav-link">Projects</a></li>
+          <li><a href="index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="index.html#contact" class="btn btn-primary btn-sm">Contact Chetan</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="error-wrapper">
+    <div class="error-card">
+      <div class="error-badge">⚠️ 404 // Route Exception</div>
+      <div class="error-code">404</div>
+      <h1 class="error-title">Architecture Route Not Found</h1>
+      <p class="error-desc">
+        The requested case study or endpoint does not exist or has been restructured. Explore the verified systems architecture case studies below or return to the portfolio home.
+      </p>
+
+      <div class="redirect-timer-box" id="timer-box">
+        <span>⏱️ Redirecting to portfolio home in <strong id="countdown">6</strong>s...</span>
+        <button onclick="cancelRedirect()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-size: 0.78rem;">[Cancel]</button>
+      </div>
+
+      <div class="error-actions">
+        <a href="index.html" class="btn btn-primary btn-lg">Return to Portfolio Home</a>
+        <a href="index.html#projects" class="btn btn-outline btn-lg">Browse All 11 Projects</a>
+      </div>
+
+      <div class="quick-routes">
+        <div class="quick-routes-title">Top Architectural Case Studies</div>
+        <div class="routes-grid">
+          <a href="projects/crash-game.html" class="route-item">
+            <span>🚀 Crash Game (50ms)</span>
+            <span>→</span>
+          </a>
+          <a href="projects/swisspoker.html" class="route-item">
+            <span>♠️ Swiss Poker Engine</span>
+            <span>→</span>
+          </a>
+          <a href="projects/spillorama-bingo.html" class="route-item">
+            <span>🎰 Spillorama Bingo (Norway)</span>
+            <span>→</span>
+          </a>
+          <a href="projects/ai-code-reviewer.html" class="route-item">
+            <span>🤖 AI PR Review Agent</span>
+            <span>→</span>
+          </a>
+          <a href="projects/ecommerce-microservices.html" class="route-item">
+            <span>📦 Kafka Microservices</span>
+            <span>→</span>
+          </a>
+          <a href="projects/ai-customer-support.html" class="route-item">
+            <span>🧠 Multi-Agent RAG (pgvector)</span>
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    let secondsLeft = 6;
+    let timerId = null;
+
+    function startTimer() {
+      const countdownElem = document.getElementById('countdown');
+      timerId = setInterval(() => {
+        secondsLeft--;
+        if (countdownElem) countdownElem.textContent = secondsLeft;
+        if (secondsLeft <= 0) {
+          clearInterval(timerId);
+          window.location.href = 'index.html';
+        }
+      }, 1000);
+    }
+
+    function cancelRedirect() {
+      if (timerId) clearInterval(timerId);
+      const timerBox = document.getElementById('timer-box');
+      if (timerBox) {
+        timerBox.innerHTML = '<span>⏸️ Auto-redirect cancelled. Browse at your own pace.</span>';
+      }
+    }
+
+    startTimer();
+  </script>
+</body>
+</html>

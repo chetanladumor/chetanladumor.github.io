@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initNavbar();
   initContactForm();
+  initScrollFeatures();
 });
 
 // Typewriter Hero Effect
@@ -613,3 +614,60 @@ function escapeHtml(str) {
     }[tag] || tag)
   );
 }
+
+// Reading Progress Bar & Back to Top Controller
+function initScrollFeatures() {
+  // Reading progress bar
+  let progressBar = document.getElementById('reading-progress');
+  if (!progressBar) {
+    progressBar = document.createElement('div');
+    progressBar.id = 'reading-progress';
+    progressBar.setAttribute('aria-hidden', 'true');
+    document.body.prepend(progressBar);
+  }
+
+  // Back to top floating button
+  let bttBtn = document.getElementById('back-to-top');
+  if (!bttBtn) {
+    bttBtn = document.createElement('button');
+    bttBtn.id = 'back-to-top';
+    bttBtn.setAttribute('aria-label', 'Back to top of page');
+    bttBtn.innerHTML = '↑';
+    document.body.appendChild(bttBtn);
+  }
+
+  bttBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Scroll listener
+  window.addEventListener('scroll', () => {
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = totalHeight > 0 ? (window.scrollY / totalHeight) * 100 : 0;
+    progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+
+    if (window.scrollY > 380) {
+      bttBtn.classList.add('show');
+    } else {
+      bttBtn.classList.remove('show');
+    }
+  }, { passive: true });
+}
+
+// Case Study Social Share Helper
+window.shareCaseStudy = function(platform, customTitle) {
+  const currentUrl = window.location.href;
+  const title = customTitle || document.title;
+
+  if (platform === 'linkedin') {
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
+    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=600');
+  } else if (platform === 'twitter') {
+    const text = encodeURIComponent(`Check out this backend systems architecture case study: "${title}" by Chetan Ladumor`);
+    const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${text}`;
+    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
+  } else if (platform === 'copy') {
+    copyToClipboard(currentUrl, 'Case study link');
+  }
+};
+

@@ -1,0 +1,14 @@
+/* TEAM */
+Senior Developer & Backend Architect: Chetan V. Ladumor
+Contact: ladumorchetan@yahoo.com
+Website: https://chetanladumor.github.io/
+GitHub: https://github.com/chetanladumor
+LinkedIn: https://www.linkedin.com/in/chetan-ladumor
+Location: Ahmedabad, Gujarat, India
+
+/* SITE */
+Standards: HTML5, CSS3, ES6+, WebSockets, Schema.org, JSON-LD
+Architecture: Static CDN Edge Deployment (Zero-dependency vanilla core)
+Design: Custom Dark Glassmorphism, JetBrains Mono & Outfit typography
+Hosting: GitHub Pages CDN
+Last Updated: 2026-09-24
