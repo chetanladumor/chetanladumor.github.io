@@ -1670,11 +1670,9 @@ h1, h2, h3, h4, h5, h6 {
 .case-featured-img {
   width: 100%;
   height: auto;
-  max-height: 540px;
+  display: block;
   object-fit: contain;
   object-position: top center;
-  display: block;
-  background: #060913;
 }
 
 .case-article {
