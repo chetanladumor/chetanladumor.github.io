@@ -19,6 +19,7 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'Express', 'Socket.IO', 'Redis Adapter', 'BullMQ', 'Redlock Mutex', 'MongoDB', 'MSSQL', 'Fortuna PRNG', 'PM2', 'Docker'],
     skills: ['node.js', 'express.js', 'socket.io', 'redis', 'bullmq', 'redlock', 'mongodb', 'mssql', 'sql server', 'fortuna prng', 'pm2', 'docker', 'nginx', 'high concurrency', 'distributed systems'],
     metrics: '40+ Venues Synchronized | Sub-100ms TV & Mobile Latency | 5 Custom Game Engines',
+    liveUrl: 'https://spillorama.no/',
     youtubeUrl: 'https://youtu.be/sxT9Rkm8hlw?si=qEjvGlZB4TUIZ48I',
   },
   {
@@ -437,18 +438,22 @@ window.openProjectModal = function(projectId) {
   }
 
   const liveAction = document.getElementById('modal-live-btn');
+  const videoAction = document.getElementById('modal-video-btn');
   const gitAction = document.getElementById('modal-git-btn');
 
-  if (proj.liveUrl) {
+  if (proj.liveUrl && liveAction) {
     liveAction.style.display = 'inline-flex';
     liveAction.href = proj.liveUrl;
-    liveAction.textContent = 'Play Live Game 🌐';
-  } else if (proj.youtubeUrl) {
-    liveAction.style.display = 'inline-flex';
-    liveAction.href = proj.youtubeUrl;
-    liveAction.textContent = 'Watch Video Demo 📺';
-  } else {
+    liveAction.textContent = proj.id === 'spillorama-bingo' ? 'Visit Live Platform 🌐' : 'Play Live Game 🌐';
+  } else if (liveAction) {
     liveAction.style.display = 'none';
+  }
+
+  if (proj.youtubeUrl && videoAction) {
+    videoAction.style.display = 'inline-flex';
+    videoAction.href = proj.youtubeUrl;
+  } else if (videoAction) {
+    videoAction.style.display = 'none';
   }
 
   if (proj.githubUrl) {
