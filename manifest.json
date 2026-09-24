@@ -1,0 +1,21 @@
+{
+  "name": "Chetan V. Ladumor - Senior Node.js Developer & Backend Systems Architect",
+  "short_name": "Chetan Ladumor",
+  "description": "Portfolio of Chetan V. Ladumor, Senior Node.js Developer & Backend Systems Architect specializing in 20k+ CCU WebSockets, Kafka, and Agentic AI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#38bdf8",
+  "icons": [
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
