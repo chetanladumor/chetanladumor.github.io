@@ -2123,4 +2123,328 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateY(-1px);
 }
 
+/* ==========================================================================
+   Command Palette (Cmd+K / Ctrl+K) Spotlight Modal
+   ========================================================================== */
+.cmd-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cmd-trigger:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+#cmd-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#cmd-palette-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+#cmd-palette {
+  background: #090e1a;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: var(--radius-lg);
+  max-width: 600px;
+  width: 92%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.15);
+  overflow: hidden;
+  transform: scale(0.96) translateY(-8px);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#cmd-palette-backdrop.open #cmd-palette {
+  transform: scale(1) translateY(0);
+}
+
+.cmd-search-wrap {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.cmd-search-icon {
+  font-size: 1.1rem;
+  margin-right: 0.75rem;
+  color: var(--accent-cyan);
+}
+
+.cmd-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  color: #ffffff;
+}
+
+.cmd-input::placeholder {
+  color: var(--text-muted);
+}
+
+.cmd-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.cmd-close-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.cmd-results {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 0.6rem;
+}
+
+.cmd-group-title {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 0.5rem 0.75rem 0.25rem;
+  font-weight: 700;
+}
+
+.cmd-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  color: #e2e8f0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.cmd-item:hover, .cmd-item.selected {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #ffffff;
+}
+
+.cmd-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cmd-item-icon {
+  font-size: 1.1rem;
+}
+
+.cmd-item-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.cmd-item-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.cmd-item-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  background: rgba(56, 189, 248, 0.1);
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-sm);
+}
+
+.cmd-footer {
+  padding: 0.6rem 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(15, 23, 42, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Architecture Diagram Lightbox (Zoom Modal)
+   ========================================================================== */
+.case-featured-img-box {
+  cursor: zoom-in;
+  position: relative;
+}
+
+.case-featured-img-box::after {
+  content: '🔍 Click to view full resolution';
+  position: absolute;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  background: rgba(3, 7, 18, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.case-featured-img-box:hover::after {
+  opacity: 1;
+}
+
+#lightbox-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: blur(12px);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+  cursor: zoom-out;
+}
+
+#lightbox-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+#lightbox-img {
+  max-width: 95vw;
+  max-height: 92vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+  transform: scale(0.95);
+  transition: transform 0.25s ease;
+}
+
+#lightbox-modal.open #lightbox-img {
+  transform: scale(1);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.lightbox-close:hover {
+  background: rgba(244, 63, 94, 0.8);
+  border-color: #f43f5e;
+}
+
+/* ==========================================================================
+   Print Stylesheet (@media print)
+   ========================================================================== */
+@media print {
+  *, *::before, *::after {
+    background: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.5 !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    padding: 0.5in !important;
+  }
+  header, footer, .nav-actions, .nav-toggle, #reading-progress, #back-to-top, 
+  .case-share-bar, .case-cta-card, .btn, .modal-backdrop, #cmd-palette-backdrop,
+  #lightbox-modal, .cmd-trigger {
+    display: none !important;
+  }
+  a {
+    text-decoration: underline !important;
+    color: #000000 !important;
+  }
+  .case-study-hero, .case-article, .container {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  .case-study-title {
+    font-size: 20pt !important;
+    margin-bottom: 8pt !important;
+  }
+  .case-meta-grid {
+    border: 1px solid #cccccc !important;
+    background: #f8f9fa !important;
+  }
+  .case-featured-img-box {
+    border: 1px solid #cccccc !important;
+    max-width: 5.5in !important;
+    page-break-inside: avoid;
+    cursor: default !important;
+  }
+  .case-featured-img-box::after {
+    display: none !important;
+  }
+  .state-card, .workflow-step-card, .benchmark-table {
+    border: 1px solid #cccccc !important;
+    background: #f8f9fa !important;
+    page-break-inside: avoid;
+  }
+}
+
+
 

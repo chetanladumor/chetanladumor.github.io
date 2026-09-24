@@ -191,6 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initContactForm();
   initScrollFeatures();
+  initCommandPalette();
+  initImageLightbox();
+  initPwaServiceWorker();
 });
 
 // Typewriter Hero Effect
@@ -659,6 +662,17 @@ window.shareCaseStudy = function(platform, customTitle) {
   const currentUrl = window.location.href;
   const title = customTitle || document.title;
 
+  if (platform === 'native' || (!platform && navigator.share)) {
+    if (navigator.share) {
+      navigator.share({
+        title: title,
+        text: `Check out this backend architecture case study by Chetan Ladumor: ${title}`,
+        url: currentUrl
+      }).catch(() => {});
+      return;
+    }
+  }
+
   if (platform === 'linkedin') {
     const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
     window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=600');
@@ -670,4 +684,287 @@ window.shareCaseStudy = function(platform, customTitle) {
     copyToClipboard(currentUrl, 'Case study link');
   }
 };
+
+// PWA Service Worker Registration
+function initPwaServiceWorker() {
+  if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      const swPath = window.location.pathname.includes('/projects/') ? '../sw.js' : '/sw.js';
+      navigator.serviceWorker.register(swPath).catch(() => {});
+    });
+  }
+}
+
+// Architecture Diagram Lightbox
+function initImageLightbox() {
+  let lightbox = document.getElementById('lightbox-modal');
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.id = 'lightbox-modal';
+    lightbox.setAttribute('role', 'dialog');
+    lightbox.setAttribute('aria-modal', 'true');
+    lightbox.setAttribute('aria-label', 'Architecture Diagram Zoom');
+    lightbox.innerHTML = `
+      <button class="lightbox-close" aria-label="Close image zoom">✕</button>
+      <img id="lightbox-img" src="" alt="Enlarged Architecture Diagram">
+    `;
+    document.body.appendChild(lightbox);
+  }
+
+  const lightboxImg = document.getElementById('lightbox-img');
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+
+  function openLightbox(src, alt) {
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || 'Architecture Diagram';
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Click listener for case featured images
+  document.querySelectorAll('.case-featured-img-box, .case-featured-img').forEach(elem => {
+    elem.addEventListener('click', (e) => {
+      const img = elem.tagName === 'IMG' ? elem : elem.querySelector('img');
+      if (img && img.src) {
+        openLightbox(img.src, img.alt);
+      }
+    });
+  });
+
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox || e.target === closeBtn) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightbox();
+    }
+  });
+}
+
+// Command Palette (Cmd+K / Ctrl+K) Controller
+function initCommandPalette() {
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const shortcutText = isMac ? '⌘K' : 'Ctrl+K';
+
+  // Mount backdrop and palette
+  let backdrop = document.getElementById('cmd-palette-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'cmd-palette-backdrop';
+    backdrop.innerHTML = `
+      <div id="cmd-palette" role="dialog" aria-modal="true" aria-label="Command Palette">
+        <div class="cmd-search-wrap">
+          <span class="cmd-search-icon">🔍</span>
+          <input type="text" class="cmd-input" id="cmd-input" placeholder="Type a project, skill, or action (e.g. 'poker', 'kafka', 'resume')..." autocomplete="off" spellcheck="false">
+          <button class="cmd-close-btn" id="cmd-close" aria-label="Close">ESC</button>
+        </div>
+        <div class="cmd-results" id="cmd-results"></div>
+        <div class="cmd-footer">
+          <span>Navigation: <kbd>↑</kbd> <kbd>↓</kbd> to move • <kbd>↵</kbd> to select</span>
+          <span>Close: <kbd>ESC</kbd></span>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(backdrop);
+  }
+
+  // Update or inject command trigger chip into navbar
+  const navActions = document.querySelector('.nav-actions');
+  if (navActions && !document.querySelector('.cmd-trigger')) {
+    const trigger = document.createElement('button');
+    trigger.className = 'cmd-trigger';
+    trigger.setAttribute('title', `Open Quick Navigation (${shortcutText})`);
+    trigger.setAttribute('aria-label', 'Open Command Palette');
+    trigger.innerHTML = `<span>Search</span> <span>${shortcutText}</span>`;
+    trigger.addEventListener('click', openPalette);
+    navActions.prepend(trigger);
+  }
+
+  const isProjectPage = window.location.pathname.includes('/projects/');
+  const rootPrefix = isProjectPage ? '../' : '';
+  const projectsPrefix = isProjectPage ? '' : 'projects/';
+
+  const COMMAND_ITEMS = [
+    // Case Studies
+    { type: 'case-study', label: 'Provably Fair Crash Game', sub: '50ms WebSocket Loop, HMAC-SHA256 Fairness', icon: '🚀', badge: 'iGaming', url: `${projectsPrefix}crash-game.html` },
+    { type: 'case-study', label: 'Swiss Poker Platform', sub: 'Multiplayer Texas Hold\'em & Omaha MTTs', icon: '♠️', badge: 'Real-Time', url: `${projectsPrefix}swisspoker.html` },
+    { type: 'case-study', label: 'Spillorama Bingo (Norway)', sub: 'Synchronizing 40+ Physical Halls & Online', icon: '🎰', badge: 'Live Production', url: `${projectsPrefix}spillorama-bingo.html` },
+    { type: 'case-study', label: 'La Dépêche Belote', sub: 'Live 2v2 French Card Engine at belote.mygamify.fr', icon: '🃏', badge: 'Live Production', url: `${projectsPrefix}ladepeche-belote.html` },
+    { type: 'case-study', label: 'Autonomous AI PR Reviewer', sub: 'LangGraph Multi-Agent GitHub PR Review', icon: '🤖', badge: 'Agentic AI', url: `${projectsPrefix}ai-code-reviewer.html` },
+    { type: 'case-study', label: 'Multi-Agent Customer Support', sub: 'PostgreSQL pgvector HNSW Hybrid RAG Pipeline', icon: '🧠', badge: 'Hybrid RAG', url: `${projectsPrefix}ai-customer-support.html` },
+    { type: 'case-study', label: 'E-Commerce Microservices', sub: 'Kafka, RabbitMQ, PgBouncer 42% Latency Cut', icon: '📦', badge: 'Distributed', url: `${projectsPrefix}ecommerce-microservices.html` },
+    { type: 'case-study', label: 'WeWatchOver Health IoT', sub: 'Wearable Biometric Telemetry & Alerts', icon: '❤️', badge: 'HealthTech', url: `${projectsPrefix}wewatchover-health.html` },
+    { type: 'case-study', label: 'AnyFlawa Geospatial Dating', sub: 'Redis GEO Real-Time Location Matchmaking', icon: '📍', badge: 'Geospatial', url: `${projectsPrefix}dating-anyflawa.html` },
+    { type: 'case-study', label: 'Lottery & Automated Draw Engine', sub: 'High-Volume Financial Ticket Transactions', icon: '🎟️', badge: 'FinTech', url: `${projectsPrefix}lottery-jackpot.html` },
+    { type: 'case-study', label: 'Casino RNG Slot Engine', sub: 'Server-Authoritative Certified Mathematics', icon: '🎰', badge: 'Certified RNG', url: `${projectsPrefix}slot-game.html` },
+
+    // Navigation Sections
+    { type: 'navigation', label: 'Portfolio Home', sub: 'Hero & Architectural Overview', icon: '🏠', badge: 'Page', url: `${rootPrefix}index.html#hero` },
+    { type: 'navigation', label: 'Engineering Projects', sub: 'Filterable Grid of 11 Production Systems', icon: '💻', badge: 'Section', url: `${rootPrefix}index.html#projects` },
+    { type: 'navigation', label: 'Technical Architecture & Principles', sub: 'High Concurrency, Fault Tolerance, Zero Latency', icon: '🏛️', badge: 'Section', url: `${rootPrefix}index.html#architecture` },
+    { type: 'navigation', label: 'Core Skills & Competencies', sub: 'Node.js, WebSockets, Kafka, LangGraph, Redis, SQL', icon: '⚡', badge: 'Section', url: `${rootPrefix}index.html#skills` },
+    { type: 'navigation', label: 'Professional Experience', sub: '10+ Years Building Production Systems', icon: '💼', badge: 'Section', url: `${rootPrefix}index.html#experience` },
+    { type: 'navigation', label: 'Architectural FAQ', sub: 'Concurrency, iGaming, AI, and Availability', icon: '❓', badge: 'Section', url: `${rootPrefix}index.html#faq` },
+    { type: 'navigation', label: 'Contact & Hire Chetan', sub: 'Email, WhatsApp, LinkedIn Direct Inquiries', icon: '✉️', badge: 'Section', url: `${rootPrefix}index.html#contact` },
+
+    // Quick Actions
+    { type: 'action', label: 'Download Official Resume PDF', sub: 'Chetan_Ladumor_Resume.pdf', icon: '📄', badge: 'Action', action: () => { window.location.href = `${rootPrefix}assets/docs/Chetan_Ladumor_Resume.pdf`; } },
+    { type: 'action', label: 'Copy Direct Email', sub: 'ladumorchetan@yahoo.com', icon: '📋', badge: 'Action', action: () => { copyToClipboard('ladumorchetan@yahoo.com', 'Email'); } },
+    { type: 'action', label: 'Open WhatsApp Chat', sub: '+91 84695 35440', icon: '💬', badge: 'External', action: () => { window.open('https://wa.me/918469535440', '_blank'); } },
+    { type: 'action', label: 'Visit GitHub Profile', sub: 'github.com/chetanladumor', icon: '🐙', badge: 'External', action: () => { window.open('https://github.com/chetanladumor', '_blank'); } },
+    { type: 'action', label: 'Visit LinkedIn Profile', sub: 'linkedin.com/in/chetan-ladumor', icon: '💼', badge: 'External', action: () => { window.open('https://www.linkedin.com/in/chetan-ladumor', '_blank'); } }
+  ];
+
+  const input = document.getElementById('cmd-input');
+  const resultsContainer = document.getElementById('cmd-results');
+  const closeBtn = document.getElementById('cmd-close');
+  let selectedIndex = 0;
+  let filteredItems = [];
+
+  function openPalette() {
+    backdrop.classList.add('open');
+    input.value = '';
+    selectedIndex = 0;
+    renderResults('');
+    setTimeout(() => input.focus(), 50);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePalette() {
+    backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function renderResults(query) {
+    const q = query.toLowerCase().trim();
+    filteredItems = COMMAND_ITEMS.filter(item => {
+      if (!q) return true;
+      return item.label.toLowerCase().includes(q) ||
+             item.sub.toLowerCase().includes(q) ||
+             (item.badge && item.badge.toLowerCase().includes(q));
+    });
+
+    if (filteredItems.length === 0) {
+      resultsContainer.innerHTML = `
+        <div style="padding: 2.5rem 1rem; text-align: center; color: var(--text-muted);">
+          <p style="margin-bottom: 0.25rem; font-weight: 600;">No matching commands or architecture case studies found.</p>
+          <p style="font-size: 0.8rem;">Try searching for "poker", "kafka", "resume", "email", or "bingo".</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (selectedIndex >= filteredItems.length) selectedIndex = 0;
+
+    let html = '';
+    let currentType = '';
+
+    filteredItems.forEach((item, idx) => {
+      if (item.type !== currentType) {
+        currentType = item.type;
+        const typeHeader = currentType === 'case-study' ? 'System Case Studies' :
+                           currentType === 'navigation' ? 'Navigation' : 'Quick Actions';
+        html += `<div class="cmd-group-title">${typeHeader}</div>`;
+      }
+
+      const isSelected = idx === selectedIndex ? 'selected' : '';
+      html += `
+        <div class="cmd-item ${isSelected}" data-index="${idx}">
+          <div class="cmd-item-left">
+            <span class="cmd-item-icon">${item.icon}</span>
+            <div>
+              <div class="cmd-item-label">${item.label}</div>
+              <div class="cmd-item-sub">${item.sub}</div>
+            </div>
+          </div>
+          <span class="cmd-item-badge">${item.badge}</span>
+        </div>
+      `;
+    });
+
+    resultsContainer.innerHTML = html;
+
+    // Attach click events
+    resultsContainer.querySelectorAll('.cmd-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.getAttribute('data-index'), 10);
+        executeItem(filteredItems[idx]);
+      });
+      el.addEventListener('mouseenter', () => {
+        resultsContainer.querySelectorAll('.cmd-item').forEach(item => item.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedIndex = parseInt(el.getAttribute('data-index'), 10);
+      });
+    });
+
+    // Scroll into view
+    const selectedEl = resultsContainer.querySelector('.cmd-item.selected');
+    if (selectedEl) selectedEl.scrollIntoView({ block: 'nearest' });
+  }
+
+  function executeItem(item) {
+    if (!item) return;
+    closePalette();
+    if (item.action) {
+      item.action();
+    } else if (item.url) {
+      window.location.href = item.url;
+    }
+  }
+
+  // Keyboard shortcut listener
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (backdrop.classList.contains('open')) {
+        closePalette();
+      } else {
+        openPalette();
+      }
+    } else if (e.key === 'Escape' && backdrop.classList.contains('open')) {
+      closePalette();
+    }
+  });
+
+  input.addEventListener('input', (e) => {
+    selectedIndex = 0;
+    renderResults(e.target.value);
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (filteredItems.length > 0) {
+        selectedIndex = (selectedIndex + 1) % filteredItems.length;
+        renderResults(input.value);
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (filteredItems.length > 0) {
+        selectedIndex = (selectedIndex - 1 + filteredItems.length) % filteredItems.length;
+        renderResults(input.value);
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredItems[selectedIndex]) {
+        executeItem(filteredItems[selectedIndex]);
+      }
+    }
+  });
+
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop) closePalette();
+  });
+
+  closeBtn.addEventListener('click', closePalette);
+}
+
 
