@@ -1,75 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://chetanladumor.github.io/</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/og-image.jpg</image:loc>
+      <image:title>Chetan V. Ladumor - Senior Node.js Developer &amp; Backend Systems Architect</image:title>
+      <image:caption>10+ years experience building 20k+ CCU WebSocket platforms, iGaming engines, and Agentic AI architectures.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/ai-code-reviewer.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-ai-code-review.jpg</image:loc>
+      <image:title>Autonomous AI Pull Request &amp; Code Review Agent Architecture</image:title>
+      <image:caption>LangGraph multi-agent review pipeline, BullMQ queue decoupling, and automated GitHub PR analysis.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/spillorama-bingo.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-bingo.jpg</image:loc>
+      <image:title>Spillorama Distributed Real-Time Multiplayer Bingo System Architecture</image:title>
+      <image:caption>Synchronizing 40+ physical bingo halls in Norway with online players under 100ms latency.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/swisspoker.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-poker.jpg</image:loc>
+      <image:title>Swiss Poker High-Concurrency Multiplayer Texas Hold'em Architecture</image:title>
+      <image:caption>Real-time poker state machine, side-pot splitting mathematics, MTT tournament balancing, and Socket.IO sync.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/ai-customer-support.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-ai-customer-support.jpg</image:loc>
+      <image:title>Enterprise Multi-Agent AI Support &amp; pgvector Hybrid RAG Pipeline</image:title>
+      <image:caption>Advanced RAG with pgvector HNSW dense vectors, GIN lexical search, and Reciprocal Rank Fusion.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/ladepeche-belote.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-belote.jpg</image:loc>
+      <image:title>La Dépêche Belote 2v2 Multiplayer French Card Game Engine</image:title>
+      <image:caption>French Belote multiplayer matchmaking and game loops running live at belote.mygamify.fr.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/crash-game.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-crash-game.jpg</image:loc>
+      <image:title>Provably Fair Multiplayer Crash Game Engine Architecture</image:title>
+      <image:caption>SHA-256 cryptographic provably fair verification, 50ms tick loop, and atomic balance resolution.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/wewatchover-health.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-health-wewatchover.jpg</image:loc>
+      <image:title>WeWatchOver Real-Time Biometric Telemetry &amp; Alerting Engine</image:title>
+      <image:caption>Wearable IoT telemetry data ingestion, emergency threshold detection, and low-latency caregiver notification.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/ecommerce-microservices.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-ecommerce.jpg</image:loc>
+      <image:title>Event-Driven E-Commerce Microservices Architecture with Apache Kafka</image:title>
+      <image:caption>High-volume order and inventory processing delivering 42% latency reduction under peak traffic.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/dating-anyflawa.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-dating-geospatial.jpg</image:loc>
+      <image:title>AnyFlawa Real-Time Geospatial Dating &amp; Matchmaking Platform</image:title>
+      <image:caption>Location-aware matchmaking, Redis geospatial radius indexing, and sub-second socket chat.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/lottery-jackpot.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-lottery.jpg</image:loc>
+      <image:title>Distributed High-Volume Lottery &amp; Real-Time Jackpot Engine</image:title>
+      <image:caption>High-throughput automated scheduled draws and atomic ticket purchases with financial audit integrity.</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://chetanladumor.github.io/projects/slot-game.html</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://chetanladumor.github.io/assets/images/project-slot-game.jpg</image:loc>
+      <image:title>Server-Authoritative Casino Slot Machine Engine with Certified RNG</image:title>
+      <image:caption>RNG reel spin evaluation, mathematical volatility model, and tamper-proof payout validation.</image:caption>
+    </image:image>
   </url>
 </urlset>

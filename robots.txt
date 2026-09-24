@@ -1,4 +1,14 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /assets/images/
+
+User-agent: Bingbot
+Allow: /
+
 User-agent: *
 Allow: /
 
 Sitemap: https://chetanladumor.github.io/sitemap.xml
+Host: chetanladumor.github.io
