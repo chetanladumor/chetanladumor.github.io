@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anyflawa: Geospatial Matchmaking &amp; Real-Time Chat | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of Anyflawa: proximity matchmaking using Redis Geospatial indexing, MongoDB 2dsphere queries, and real-time WebSocket chat by Chetan Ladumor.">
+  <meta name="keywords" content="Redis Geospatial Matchmaking, MongoDB 2dsphere Node.js, WebSockets Real-Time Chat, Location-Based App Backend, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/dating-anyflawa.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Anyflawa Geospatial Matchmaking Architecture | Chetan Ladumor">
+  <meta property="og:description" content="Sub-5ms proximity distance discovery using Redis GEO commands and real-time WebSocket streaming in Node.js.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-dating-geospatial.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/dating-anyflawa.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Anyflawa: Proximity Geospatial Matchmaking & Real-Time Chat Architecture",
+    "description": "Architectural breakdown of a location-sensitive mobile matchmaking platform combining Redis Geospatial sets with MongoDB 2dsphere spatial indexes.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-dating-geospatial.jpg",
+    "datePublished": "2023-09-12"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="../index.html#contact" class="btn btn-outline btn-sm">Contact Chetan</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">Anyflawa Geospatial Platform</span>
+        </nav>
+
+        <span class="project-badge-tag tag-social" style="margin-bottom: 1rem; display: inline-block;">Mobile &amp; Geospatial Systems</span>
+        <h1 class="case-study-title">Anyflawa: Proximity Matchmaking &amp; Real-Time Chat</h1>
+        <p class="case-study-lead">
+          Architected proximity-based matchmaking combining Redis Geospatial indexing with MongoDB 2dsphere spatial queries for sub-5ms location discovery, live GPS tracking, and multi-party WebSocket messaging.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Distance Query Speed</div>
+            <div class="meta-val">&lt; 5ms via Redis GEO Commands</div>
+          </div>
+          <div>
+            <div class="meta-label">Database Indexing</div>
+            <div class="meta-val">MongoDB 2dsphere Spatial Sets</div>
+          </div>
+          <div>
+            <div class="meta-label">Real-Time Messaging</div>
+            <div class="meta-val">WebSockets with Read Receipts &amp; Typing</div>
+          </div>
+          <div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js, Express, Redis, AWS S3</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-dating-geospatial.jpg" alt="Anyflawa Geospatial Matchmaking and Chat" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; Engineering Strategy</h2>
+          <p>
+            In location-aware mobile applications, calculating geometric distances between thousands of moving users in a relational database or flat document store produces heavy CPU loads. Running trigonometry (Haversine formula) across millions of coordinates will quickly exhaust server memory.
+          </p>
+          <p>
+            I architected a <strong>two-tier spatial query pipeline</strong>:
+          </p>
+          <ul>
+            <li><strong>Tier 1: Redis Geospatial Index (In-Memory)</strong>: Coordinates are stored in Redis using <code>GEOADD</code>. Nearby candidate user IDs within a specified radius (e.g., 5km) are retrieved in microseconds using <code>GEORADIUSBYMEMBER</code> or <code>GEOSEARCH</code>.</li>
+            <li><strong>Tier 2: MongoDB 2dsphere Query</strong>: The candidate IDs are piped to MongoDB to apply rich demographic filters (age, interests, preferences) in a single indexed batch lookup.</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <h2>2. Real-Time WebSocket Chat Infrastructure</h2>
+          <p>
+            Matched users communicate via an event-driven WebSocket pipeline featuring:
+          </p>
+          <ul>
+            <li><strong>Ephemeral Presence &amp; Typing Indicators</strong>: Tracked via Redis key TTLs without unnecessary database writes.</li>
+            <li><strong>Offline Message Queuing</strong>: Messages for disconnected users are persisted in MongoDB and pushed as Apple APNs / Firebase FCM push notifications.</li>
+            <li><strong>Media Storage</strong>: Secure direct S3 pre-signed upload URLs for photo and voice notes.</li>
+          </ul>
+        </section>
+
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building Location-Aware or Social Systems?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            Whether you need geospatial indexing, sub-second matchmaking, or scalable real-time chat architectures, let's connect.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Contact Chetan Ladumor</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

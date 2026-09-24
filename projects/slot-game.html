@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scalable RNG Slot Game Engine: Real-Time Reel Simulation | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of a scalable real-time RNG Slot game engine featuring configurable paylines, reel strip simulation, RTP models, and atomic balance transactions by Chetan Ladumor.">
+  <meta name="keywords" content="Slot Game Engine Node.js, RNG Gaming Engine, Reel Strip Simulation, Socket.IO Casino Games, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/slot-game.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Scalable RNG Slot Game Engine Architecture | Chetan Ladumor">
+  <meta property="og:description" content="Real-time spin lifecycle, configurable paytable evaluations, and atomic wallet settlements in high-concurrency Node.js.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-slot-game.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/slot-game.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Scalable RNG Slot Game Engine Architecture",
+    "description": "Architectural breakdown of an RNG slot game backend handling spin lifecycles, reel strip simulations, free spin triggers, and atomic financial balance settlements.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-slot-game.jpg",
+    "datePublished": "2022-09-10"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="../index.html#contact" class="btn btn-outline btn-sm">Contact Chetan</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">Scalable RNG Slot Game</span>
+        </nav>
+
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; RNG Systems</span>
+        <h1 class="case-study-title">Scalable RNG Slot Game Engine Architecture</h1>
+        <p class="case-study-lead">
+          Contributed to a scalable real-time slot game backend featuring configurable paylines, reel strip simulation, symbol weighting, RTP verification, and atomic wallet transactions under high spin concurrency.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Reel Engine</div>
+            <div class="meta-val">RNG Symbol Generation &amp; Strip Mapping</div>
+          </div>
+          <div>
+            <div class="meta-label">Payline Math</div>
+            <div class="meta-val">Multi-line, Cascading &amp; Multipliers</div>
+          </div>
+          <div>
+            <div class="meta-label">Concurrency</div>
+            <div class="meta-val">Atomic Balance Updates via Redis</div>
+          </div>
+          <div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js, Socket.IO, MySQL, Redis</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-slot-game.jpg" alt="RNG Slot Game Engine Preview" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; Engine Mechanics</h2>
+          <p>
+            Slot games require sub-second spin responses, mathematical compliance with certified RTP (Return to Player) percentages, and guaranteed balance accuracy across millions of spins per day.
+          </p>
+          <p>
+            I contributed to the spin lifecycle, bet placements, reel simulation, scatter/wild bonus triggers, and wallet reconciliation, ensuring low-latency Socket.IO event updates.
+          </p>
+        </section>
+
+        <section class="case-section">
+          <h2>2. The Spin Lifecycle &amp; Paytable Evaluation</h2>
+          <ul>
+            <li><strong>RNG Stop Generation</strong>: A cryptographically secure RNG generates stop indexes for each virtual reel strip.</li>
+            <li><strong>Payline Mapping</strong>: The resulting matrix is evaluated against configured payline patterns (horizontal, diagonal, zigzag) to calculate base game payouts.</li>
+            <li><strong>Feature Triggers</strong>: Scatters trigger free spin sessions with multiplier multipliers, while Wild symbols substitute for standard paytable symbols.</li>
+            <li><strong>Atomic Financial Settlement</strong>: Bet deductions and payout credits execute atomically to prevent balance desynchronization under rapid auto-spin intervals.</li>
+          </ul>
+        </section>
+
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building High-Speed Casino or Gaming Engines?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            From reel strip math and RTP verification to real-time wallet settlement pipelines, let's connect.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Contact Chetan Ladumor</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spillorama Bingo Infrastructure: 40+ Hall Real-Time Sync | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of Spillorama Bingo: a hybrid multiplayer gaming ecosystem in Norway synchronizing 40+ physical venues with online players under 100ms latency, built by Chetan Ladumor.">
+  <meta name="keywords" content="Real-Time Bingo Software, Node.js WebSockets, Spillorama Norway, Redis PubSub Gaming, Socket.IO High Concurrency, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/spillorama-bingo.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Spillorama Bingo Infrastructure: 40+ Hall Real-Time Sync | Chetan Ladumor">
+  <meta property="og:description" content="How Chetan Ladumor engineered a sub-100ms synchronized gaming ecosystem connecting 40+ physical venues in Norway with mobile players across 5 game engines.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-bingo.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/spillorama-bingo.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Spillorama Multi-Game Bingo Infrastructure: 40+ Physical Venues Synchronized",
+    "description": "Architectural breakdown of a large-scale real-time gaming backend synchronizing TV hall screens with online players using Node.js, WebSockets, Redis Pub/Sub, and MongoDB.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-bingo.jpg",
+    "datePublished": "2024-03-15"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="https://youtu.be/sxT9Rkm8hlw?si=qEjvGlZB4TUIZ48I" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">Watch Video Demo 📺</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">Spillorama Bingo Infrastructure</span>
+        </nav>
+
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; Real-Time Systems</span>
+        <h1 class="case-study-title">Spillorama Multi-Game Bingo Infrastructure (Norway)</h1>
+        <p class="case-study-lead">
+          Designed and built the hybrid distributed gaming backend synchronizing 40+ physical bingo halls in Norway with thousands of concurrent online players, achieving sub-100ms state consistency between overhead TV hall displays and player touchscreens.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Client &amp; Region</div>
+            <div class="meta-val">AIS Technolabs / Spillorama (Norway)</div>
+          </div>
+          <div>
+            <div class="meta-label">Scale</div>
+            <div class="meta-val">40+ Physical Halls &amp; Online Players</div>
+          </div>
+          <div>
+            <div class="meta-label">Latency SLA</div>
+            <div class="meta-val">&lt; 100ms Broadcast Sync</div>
+          </div>
+          <div>
+            <div class="meta-label">Tech Stack</div>
+            <div class="meta-val">Node.js, Socket.IO, Redis, BullMQ, Mongo</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-bingo.jpg" alt="Spillorama Norway TV Screen and Mobile Sync" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <!-- Section 1 -->
+        <section class="case-section">
+          <h2>1. Project Overview &amp; Challenge</h2>
+          <p>
+            In Norway, Bingo is a widely popular social entertainment pastime with dozens of licensed physical halls operating simultaneously. Spillorama needed to modernize their legacy terminal infrastructure by unifying <strong>40+ physical bingo venues with modern web and mobile players into one synchronized national game network</strong>.
+          </p>
+          <p>
+            The core engineering challenge was <strong>strict real-time clock and state synchronization</strong>:
+          </p>
+          <ul>
+            <li>When a bingo ball is drawn by the server, players watching the large overhead TV screens in Oslo or Bergen had to see the ball at the exact same millisecond as players dabbing cards on their mobile devices at home.</li>
+            <li>Any clock drift, out-of-order event delivery, or delayed draw packet would compromise game fairness and violate Norwegian gaming regulations.</li>
+            <li>The system had to support five completely distinct game modes running round-the-clock with automated scheduling and zero server restarts.</li>
+          </ul>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="case-section">
+          <h2>2. The Five Synchronized Game Engines</h2>
+          <p>
+            I engineered the state machines and rule evaluation logic for five custom game variants:
+          </p>
+          <ul>
+            <li><strong>Papir Bingo (Hybrid 75-Ball)</strong>: Synchronizes traditional paper cards sold in physical halls with digital tickets, tracking multi-tier line wins (1-line, 2-line, Full House).</li>
+            <li><strong>Lyn Bingo (Rapid 21-Ball)</strong>: Fast-paced 21-ball speed bingo with 3-second draw tick cycles and rapid settlement.</li>
+            <li><strong>Bingo Bonanza</strong>: Configurable geometric win patterns, dynamic ticket pricing, and progressive multi-hall jackpot pooling.</li>
+            <li><strong>Turbo Mania (33-Ball)</strong>: High-energy format with randomized multiplier balls that scale cash payouts upon pattern completion.</li>
+            <li><strong>SpinnGo</strong>: A hybrid game model combining multi-ticket bingo rounds with secondary bonus rounds (Wheel of Fortune and roulette wheel triggers).</li>
+          </ul>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Distributed Real-Time Architecture</h2>
+          <p>
+            To prevent single points of failure and scale across thousands of concurrent players, the backend was designed as a <strong>stateless Node.js cluster</strong> decoupled via Redis:
+          </p>
+
+          <div class="code-preview-box">
+<span class="code-comment"># Spillorama Distributed Synchronization Topology</span>
+[40+ Physical TV Screen Clients]       [Web &amp; Mobile Players (iOS/Android)]
+              │                                      │
+              └──────────────────┬───────────────────┘
+                                 │ WSS (Encrypted WebSockets)
+                                 ▼
+                    [AWS ALB / HAProxy Load Balancer]
+                                 │
+         ┌───────────────────────┼───────────────────────┐
+         ▼                       ▼                       ▼
+  [Node.js Worker 1]      [Node.js Worker 2]      [Node.js Worker N]
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                   <strong>[Redis Pub/Sub Socket.IO Adapter]</strong>
+                   (Cross-Node State Sync &amp; Room Broadcasts)
+                                 │
+             ┌───────────────────┴───────────────────┐
+             ▼                                       ▼
+  <strong>[Distributed Redlock Lock]</strong>              <strong>[BullMQ Job Queues &amp; ZSET]</strong>
+  (SETNX / Lua Atomic Guard)             (Sub-second Ball Draw Timing)
+             │                                       │
+             └───────────────────┬───────────────────┘
+                                 │
+                                 ▼
+                     [High-Write MongoDB Replica]
+                     (bulkWrite Batch Ticket Validation)
+                                 │
+                                 ▼
+              [External Providers: Metronia &amp; Ok Bingo]
+              (Real-Time Settlement &amp; Hall Fiscal Auditing)
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Key Architectural Decisions &amp; Gotchas Solved</h2>
+
+          <div class="workflow-steps-list">
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">1</div>
+              <h3 class="workflow-step-title">Eliminating In-Memory Timers (setTimeout / setInterval)</h3>
+              <p>
+                In a multi-node cluster, using native <code>setInterval</code> for ball draws causes clock drift and duplicate ball draws if multiple servers trigger ticks. I replaced all internal timers with <strong>Redis Sorted Sets (ZSET) and BullMQ delayed job queues</strong>. The draw clock is centralized in Redis, ensuring atomic, monotonic ball draws.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">2</div>
+              <h3 class="workflow-step-title">Preventing Split-Brain Duplicate Draws (Redlock Pattern)</h3>
+              <p>
+                When a draw tick fires, multiple cluster workers could attempt to resolve the draw simultaneously. Using <strong>Redis distributed locks (`SETNX` with Lua script expiration)</strong>, only one worker node can acquire the draw lock. If that node crashes mid-draw, the lock safely releases and another node resumes state seamlessly.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">3</div>
+              <h3 class="workflow-step-title">Sub-100ms TV Display &amp; Player Alignment</h3>
+              <p>
+                TV display screens in physical venues run WebGL display clients connected over persistent WebSockets. By using the <strong>Socket.IO Redis adapter</strong> with binary message serialization and pre-fetching next-ball animations, the visual draw renders simultaneously on hall screens and handheld phones with under 100ms variance.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">4</div>
+              <h3 class="workflow-step-title">High-Write Ticket Validation via bulkWrite</h3>
+              <p>
+                With tens of thousands of active tickets per round, evaluating every card sequentially in MongoDB would cause disk I/O starvation. I implemented in-memory card bitmask evaluation on Node.js workers and flushed prize winners in batches using MongoDB <code>bulkWrite</code> with compound index lookups.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section class="case-section">
+          <h2>5. Production Impact &amp; Results</h2>
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>System Metric</th>
+                <th>Target Requirement</th>
+                <th>Production Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Physical Venues Connected</strong></td>
+                <td>30+ Halls</td>
+                <td><strong>40+ Venues Active Across Norway</strong></td>
+              </tr>
+              <tr>
+                <td><strong>TV vs. Mobile Display Drift</strong></td>
+                <td>&lt; 250ms</td>
+                <td><strong>&lt; 100ms Synchronized Latency</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Duplicate Draw Rate</strong></td>
+                <td>0.00% Tolerated</td>
+                <td><strong>0 Incidents (Guaranteed by Redlock)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Platform Availability</strong></td>
+                <td>99.5%</td>
+                <td><strong>99.9% Uptime with Zero-Downtime Rollouts</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- CTA -->
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building High-Concurrency Gaming Backends?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            Whether you're developing multiplayer gaming systems, WebSocket broadcasting clusters, or distributed ticket engines, let's architect a high-scale solution.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Design with Chetan</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

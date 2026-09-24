@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code Reviewer: LangGraph Multi-Agent GitHub PR Automation | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of an automated AI GitHub PR code reviewer built by Chetan Ladumor with Node.js, TypeScript, LangGraph, LangChain, BullMQ, and OpenRouter API.">
+  <meta name="keywords" content="LangGraph Node.js, AI Code Reviewer, Multi-Agent System, GitHub PR Automation, BullMQ Redis, LangChain TypeScript, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/ai-code-reviewer.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="AI Code Reviewer: LangGraph Multi-Agent Architecture | Chetan Ladumor">
+  <meta property="og:description" content="Deep dive into the 5-agent parallel review pipeline, BullMQ queue decoupling, and automated GitHub PR synthesis.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-ai-code-review.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/ai-code-reviewer.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AI Code Reviewer: LangGraph Multi-Agent GitHub PR Automation",
+    "description": "Architectural case study of an event-driven AI code review platform utilizing LangGraph state graphs, 5 parallel specialized agents, BullMQ, and GitHub Webhooks.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-ai-code-review.jpg",
+    "datePublished": "2026-08-18"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="https://github.com/chetanladumor/ai-code-review" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">GitHub Repo 🐙</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">AI Code Reviewer</span>
+        </nav>
+
+        <span class="project-badge-tag tag-ai" style="margin-bottom: 1rem; display: inline-block;">Agentic AI &amp; LangGraph</span>
+        <h1 class="case-study-title">AI-Based GitHub PR &amp; Commit Review Automation</h1>
+        <p class="case-study-lead">
+          An event-driven, multi-agent code analysis platform that intercepts GitHub pull requests, executes 5 specialized LLM agents in parallel across a state graph, and synthesizes structured, explainable review comments directly onto code diffs.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Role</div>
+            <div class="meta-val">Lead AI Systems Architect</div>
+          </div>
+          <div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js (TypeScript) &amp; Express</div>
+          </div>
+          <div>
+            <div class="meta-label">AI Orchestration</div>
+            <div class="meta-val">LangGraph &amp; LangChain (OpenRouter)</div>
+          </div>
+          <div>
+            <div class="meta-label">Queue &amp; Storage</div>
+            <div class="meta-val">BullMQ, Redis, MongoDB</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-ai-code-review.jpg" alt="AI Code Reviewer Architecture Diagram" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <!-- Section 1 -->
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; The Problem</h2>
+          <p>
+            In modern engineering teams, peer pull request (PR) reviews are notorious bottlenecks. Senior developers spend hours identifying recurring security oversights, memory leaks, missed indexing, or SOLID violations.
+          </p>
+          <p>
+            A naive approach is to dump an entire git diff into a single monolithic LLM prompt: <em>"Review this code for bugs, security, and style."</em> In practice, LLMs experience "context dilution" and laziness with monolithic prompts—overlooking subtle re-entrancy issues, SQL injections, or unindexed database queries.
+          </p>
+          <p>
+            I architected this platform to treat code review as a <strong>cooperative multi-agent engineering workflow</strong>. By splitting the review task into five independent domain-specific agents (Security, Quality, Performance, Architecture, and DevOps) orchestrated via <strong>LangGraph</strong>, the system delivers thorough, reproducible, and granular feedback on every pull request.
+          </p>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="case-section">
+          <h2>2. End-to-End System Architecture</h2>
+          <p>
+            Because LLM inference takes 8–20 seconds per agent, GitHub webhook requests must never block on AI processing, otherwise GitHub times out after 10 seconds. The ingestion pipeline is strictly decoupled using <strong>BullMQ and Redis</strong>:
+          </p>
+
+          <div class="code-preview-box">
+<span class="code-comment"># Ingestion &amp; Worker Pipeline Architecture</span>
+[GitHub Webhook: pull_request.opened]
+   │
+   ▼
+[Express Webhook Ingress]
+   │  ├── 1. HMAC SHA-256 Signature Verification
+   │  ├── 2. MongoDB Delivery ID Deduplication (Replay Protection)
+   │  └── 3. Enqueue Job to BullMQ (Redis)
+   │
+   ▼ <strong>HTTP 202 Accepted (Immediate Response to GitHub within 40ms)</strong>
+   
+[BullMQ Worker Service]
+   │
+   ├── Fetch Git Diff via Octokit (GitHub App JWT Auth)
+   ├── Validate Diff Token Boundaries &amp; Ignore Paths (.lock, .min.js)
+   │
+   ▼
+<strong>[LangGraph StateGraph Engine]</strong>
+   │
+   ├── Initial State: { diff, repo, prNumber, findings: [] }
+   │
+   ├── <strong>PARALLEL AGENT EXECUTION (Promise.all / Graph Branches):</strong>
+   │   ├── 🛡️ <strong>Security Agent</strong>: Secret leaks, OWASP Top 10, sanitization
+   │   ├── ⚡ <strong>Performance Agent</strong>: N+1 queries, memory leaks, event loop blocks
+   │   ├── 📐 <strong>Architecture Agent</strong>: Coupling, SOLID principles, layer leakage
+   │   ├── 💎 <strong>Quality Agent</strong>: Code smells, edge cases, type safety
+   │   └── 🐳 <strong>DevOps Agent</strong>: Dockerfile lint, CI/CD impact, env drift
+   │
+   ├── <strong>State Reducer Channel:</strong> (prev, next) => [...prev, ...next]
+   │
+   ▼
+<strong>[Tech Lead Aggregator Node]</strong>
+   ├── Deduplicate redundant suggestions across agents
+   ├── Filter findings below 75% confidence score
+   └── Synthesize markdown report with collapsible file diff tables
+   │
+   ▼
+<strong>[Octokit Pull Request Review Comment API]</strong>
+   ├── Post review summary comment on PR
+   ├── Store review telemetry in MongoDB
+   └── Stream real-time completion event via Socket.IO
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Why LangChain + LangGraph?</h2>
+          <p>
+            Understanding the distinction between LangChain and LangGraph is crucial:
+          </p>
+          <ul>
+            <li>
+              <strong>LangChain (Component Level)</strong>: Handles model abstraction (swapping between Claude 3.5 Sonnet, GPT-4o, and DeepSeek via OpenRouter), structured prompt formatting, and Zod output parsing.
+            </li>
+            <li>
+              <strong>LangGraph (Orchestration Level)</strong>: Manages the <em>Stateful Graph Workflow</em>. It provides a shared memory state, enables concurrent agent branches, and merges output arrays atomically using mathematical state reducers.
+            </li>
+          </ul>
+
+          <div class="callout-box">
+            <div class="callout-title">💡 The Reducer Pattern in Action</div>
+            <p style="margin: 0; color: var(--text-secondary);">
+              Instead of agents overwriting state, LangGraph defines a <code>findings</code> channel with a reducer: <code>(prev, next) =&gt; [...prev, ...next]</code>. When Security finishes, it appends its vulnerabilities. When Performance finishes 2 seconds later, it appends its latency findings. The graph guarantees thread-safe, non-destructive state accumulation.
+            </p>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Key Engineering Challenges Solved</h2>
+          
+          <div class="workflow-steps-list">
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">1</div>
+              <h3 class="workflow-step-title">Webhook Security &amp; Idempotency</h3>
+              <p>
+                Guarded against malicious payloads by calculating HMAC SHA-256 signatures against the GitHub App secret. Stored GitHub's <code>X-GitHub-Delivery</code> GUID in MongoDB with a unique index to guarantee that duplicate webhook retries are immediately discarded.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">2</div>
+              <h3 class="workflow-step-title">Structured Output Validation with Zod</h3>
+              <p>
+                Unstructured LLM text is difficult to programmatically post onto specific PR lines. We forced all 5 agents to return strict Zod schemas defining <code>file</code>, <code>lineNumber</code>, <code>severity</code> (HIGH/MEDIUM/LOW), <code>message</code>, and <code>confidenceScore</code>. If an LLM response fails validation, LangChain retries with automated error feedback.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">3</div>
+              <h3 class="workflow-step-title">Multi-Model Routing via OpenRouter</h3>
+              <p>
+                Security and Architecture analysis benefit from deep reasoning models (Claude 3.5 Sonnet / GPT-4o), whereas Quality and DevOps checks run efficiently on faster, lightweight models. OpenRouter provided dynamic routing with automatic rate-limit failovers.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Benchmark / Results -->
+        <section class="case-section">
+          <h2>5. Production Impact &amp; Metrics</h2>
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Traditional Manual Review</th>
+                <th>With LangGraph AI Reviewer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>First Review Turnaround</strong></td>
+                <td>4 to 12 Hours</td>
+                <td><strong>&lt; 45 Seconds</strong></td>
+              </tr>
+              <tr>
+                <td><strong>OWASP / Secret Detection</strong></td>
+                <td>Inconsistent (Human Fatigue)</td>
+                <td><strong>100% Automated Scanning</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Webhook Response Time</strong></td>
+                <td>N/A</td>
+                <td><strong>&lt; 40ms (HTTP 202 via BullMQ)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>False Positive Filter</strong></td>
+                <td>N/A</td>
+                <td><strong>Aggregator filters out &lt;75% confidence</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- CTA -->
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Interested in Agentic AI Architecture?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            Whether you need LangGraph multi-agent workflows, RAG pipelines, or high-throughput queue processing in Node.js—let's connect.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Get in Touch with Chetan</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

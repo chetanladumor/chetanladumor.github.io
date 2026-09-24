@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Agent AI Support: Advanced Hybrid RAG &amp; pgvector | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of an enterprise multi-agent customer support platform featuring hybrid RAG (pgvector HNSW + GIN keyword search), Reciprocal Rank Fusion (RRF), and cross-encoder reranking by Chetan Ladumor.">
+  <meta name="keywords" content="Hybrid RAG Node.js, pgvector HNSW PostgreSQL, Reciprocal Rank Fusion RRF, Multi-Agent AI System, Vercel AI SDK, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/ai-customer-support.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Multi-Agent AI Support: Advanced Hybrid RAG Architecture | Chetan Ladumor">
+  <meta property="og:description" content="Deep dive into query rewriting, pgvector HNSW indexing, GIN lexical search, RRF rank fusion, and AWS ECS Fargate deployment.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-ai-customer-support.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/ai-customer-support.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Enterprise Multi-Agent AI Support Platform with Hybrid RAG & pgvector",
+    "description": "Architectural breakdown of an enterprise RAG retrieval pipeline combining dense vector embeddings with sparse full-text search, reciprocal rank fusion, and SSE streaming.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-ai-customer-support.jpg",
+    "datePublished": "2026-08-25"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="https://github.com/chetanladumor/customer-support-node-agent" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">GitHub Repo 🐙</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">Multi-Agent AI Customer Support</span>
+        </nav>
+
+        <span class="project-badge-tag tag-ai" style="margin-bottom: 1rem; display: inline-block;">Agentic AI &amp; Hybrid RAG</span>
+        <h1 class="case-study-title">Multi-Agent AI Customer Support &amp; Hybrid RAG Platform</h1>
+        <p class="case-study-lead">
+          An enterprise-grade customer support platform built with Node.js, Express, TypeScript, and React. Features an advanced hybrid RAG retrieval pipeline combining pgvector HNSW dense embeddings with PostgreSQL GIN keyword search, unified through Reciprocal Rank Fusion (RRF) and cross-encoder reranking.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">RAG Architecture</div>
+            <div class="meta-val">Hybrid (pgvector HNSW + GIN + RRF)</div>
+          </div>
+          <div>
+            <div class="meta-label">Agent Coordination</div>
+            <div class="meta-val">Support, Billing &amp; Order Router Agents</div>
+          </div>
+          <div>
+            <div class="meta-label">Streaming &amp; Schema</div>
+            <div class="meta-val">Server-Sent Events (SSE) &amp; Zod Tools</div>
+          </div>
+          <div>
+            <div class="meta-label">Cloud Deployment</div>
+            <div class="meta-val">Docker on AWS ECS Fargate &amp; RDS</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-ai-customer-support.jpg" alt="Multi-Agent Customer Support RAG Pipeline" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <!-- Section 1 -->
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; Motivation</h2>
+          <p>
+            Standard vector search (semantic retrieval) fails frequently in customer support: it is unable to accurately retrieve specific order numbers, product SKUs, or exact error codes (e.g., <em>"Error 504"</em> or <em>"Order #98124"</em>). Conversely, traditional keyword search fails to understand conversational synonyms (e.g., confusing <em>"refund"</em> with <em>"money back"</em>).
+          </p>
+          <p>
+            I engineered a <strong>production-grade Hybrid RAG pipeline</strong> in PostgreSQL that combines both worlds, eliminating hallucinations and ensuring that customer responses are strictly grounded in verified enterprise documentation with traceable source citations.
+          </p>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="case-section">
+          <h2>2. The 6-Stage Hybrid RAG Pipeline</h2>
+          
+          <div class="workflow-steps-list">
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">1</div>
+              <h3 class="workflow-step-title">Query Rewriting &amp; Intent Distillation</h3>
+              <p>
+                Customers communicate conversationally (e.g., <em>"Hey, I bought these headphones last week and they stopped working, can I return them?"</em>). The system first executes an ultra-fast local LLM step to distill this into a search-optimized intent query: <code>"return window defective headphones warranty policy"</code>.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">2</div>
+              <h3 class="workflow-step-title">Multi-Tenant Pre-Filtering</h3>
+              <p>
+                Before executing any vector distance calculations, the SQL query applies hard filters for <code>tenantId</code> and <code>country</code>. Pre-filtering ensures strict enterprise data isolation (Company A never retrieves Company B's confidential docs) while saving massive compute overhead compared to post-filtering.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">3</div>
+              <h3 class="workflow-step-title">Simultaneous Hybrid Retrieval (Vector + Keyword)</h3>
+              <p>
+                Executed within a single PostgreSQL query utilizing Common Table Expressions (CTEs):
+              </p>
+              <ul>
+                <li><strong>Dense Semantic Search</strong>: Uses <code>pgvector</code> with an <strong>HNSW (Hierarchical Navigable Small World)</strong> index to measure cosine similarity across embeddings.</li>
+                <li><strong>Sparse Lexical Search</strong>: Uses PostgreSQL's <strong>GIN index</strong> on a precomputed <code>search_vector</code> column (generated via automated database triggers) to capture exact part numbers and SKU codes.</li>
+              </ul>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">4</div>
+              <h3 class="workflow-step-title">Reciprocal Rank Fusion (RRF)</h3>
+              <p>
+                Because cosine distance (0.0 to 1.0) and full-text TF-IDF scores (e.g., 14.2) reside on incompatible scales, raw addition produces biased results. I implemented the industry-standard <strong>RRF formula</strong>:
+              </p>
+              <div class="code-preview-box" style="margin: 0.8rem 0;">
+RRF_Score = (1.0 / (60 + Vector_Rank)) + (1.0 / (60 + Keyword_Rank))
+              </div>
+              <p>
+                This ranks documents based purely on their position in both search lists, producing a balanced candidate set of the top 30 chunks.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">5</div>
+              <h3 class="workflow-step-title">Cross-Encoder Reranker (LLM-as-a-Judge)</h3>
+              <p>
+                The top 30 candidate chunks are passed to a cross-encoder stage. Unlike bi-encoders that encode documents in isolation, the cross-encoder evaluates the user's rewritten query alongside the chunk text simultaneously, scoring relevance from 0 to 100 and filtering down to the <strong>Top 2 most authoritative chunks</strong>.
+              </p>
+            </div>
+
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">6</div>
+              <h3 class="workflow-step-title">Grounded Generation with Traceable Citations</h3>
+              <p>
+                The final prompt injects the curated chunks with strict system instructions prohibiting ungrounded answers. Responses stream to the user via <strong>Server-Sent Events (SSE)</strong>, complete with clickable citation chips linking to verified knowledge base article IDs.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Multi-Agent Routing Architecture</h2>
+          <p>
+            Beyond knowledge retrieval, the platform employs specialized sub-agents:
+          </p>
+          <ul>
+            <li><strong>Intent Router Agent</strong>: Classifies whether the customer requires Order Tracking, Billing &amp; Invoices, or General Technical Support.</li>
+            <li><strong>Order Agent</strong>: Equipped with Zod-validated database tool calls to look up order shipment statuses, tracking numbers, and delivery ETAs directly from PostgreSQL.</li>
+            <li><strong>Billing Agent</strong>: Handles refund requests, invoice lookups, and payment gateway status verification through Stripe API webhooks.</li>
+          </ul>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Key Engineering Decisions</h2>
+          <div class="callout-box">
+            <div class="callout-title">⚙️ Why HNSW Over IVFFlat?</div>
+            <p style="margin: 0; color: var(--text-secondary);">
+              While IVFFlat requires periodic retraining and degrades query recall under high update volume, <strong>HNSW (Hierarchical Navigable Small World)</strong> constructs a multi-layer graph index. It enables $O(\log N)$ query traversal with high recall (&gt;98%) and supports immediate real-time vector inserts without maintenance downtime.
+            </p>
+          </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Looking to Implement Production RAG?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            Whether you need hybrid vector search, custom embedding factories, or multi-agent tool orchestration in Node.js &amp; TypeScript—let's discuss your roadmap.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Connect with Chetan Ladumor</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

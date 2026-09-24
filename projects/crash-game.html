@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provably Fair Crash Game Engine: High-Frequency WebSockets | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of a provably fair multiplayer Crash game backend featuring SHA-256 seed cryptography, 50ms real-time tick loops, and sub-millisecond cashout resolution by Chetan Ladumor.">
+  <meta name="keywords" content="Crash Game Engine Node.js, Provably Fair SHA-256, Real-Time WebSockets Gaming, High Concurrency Betting, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/crash-game.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Provably Fair Crash Game Engine Architecture | Chetan Ladumor">
+  <meta property="og:description" content="Deep dive into SHA-256 provably fair verification, exponential multiplier curves, and sub-millisecond cashouts in Node.js.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-crash-game.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/crash-game.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Provably Fair Multiplayer Crash Game Engine Architecture",
+    "description": "Architectural case study of a high-frequency real-time betting engine with SHA-256 cryptographic fairness, 50ms tick loops, and atomic wallet settlements.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-crash-game.jpg",
+    "datePublished": "2023-08-14"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="../index.html#contact" class="btn btn-outline btn-sm">Contact Chetan</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">Provably Fair Crash Game</span>
+        </nav>
+
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; High Concurrency</span>
+        <h1 class="case-study-title">Provably Fair Multiplayer Crash Game Engine</h1>
+        <p class="case-study-lead">
+          A high-frequency real-time betting platform capable of handling thousands of simultaneous bets per round, powered by SHA-256 cryptographic provably fair seeds, 50ms exponential curve broadcasting, and sub-millisecond atomic cashouts.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Tick Rate</div>
+            <div class="meta-val">50ms Real-Time Multiplier Ticks</div>
+          </div>
+          <div>
+            <div class="meta-label">Fairness Standard</div>
+            <div class="meta-val">100% SHA-256 Cryptographic Verification</div>
+          </div>
+          <div>
+            <div class="meta-label">Cashout Processing</div>
+            <div class="meta-val">Sub-Millisecond Atomic Execution</div>
+          </div>
+          <div>
+            <div class="meta-label">Tech Stack</div>
+            <div class="meta-val">Node.js, WebSockets, Redis, PostgreSQL</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-crash-game.jpg" alt="Provably Fair Crash Game Architecture" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <!-- Section 1 -->
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; Game Mechanics</h2>
+          <p>
+            Crash has emerged as one of the most popular formats in contemporary online gaming. In every round, a rocket or curve ascends with an increasing multiplier starting at <code>1.00x</code> and growing exponentially. Players place bets before launch and must hit "Cash Out" before the rocket crashes at an unpredictable threshold.
+          </p>
+          <p>
+            The two critical technical pillars of this project are:
+          </p>
+          <ul>
+            <li><strong>Provably Fair Cryptography</strong>: Mathematically proving to skeptical players that the crash point was predetermined before bets were placed, and was not manipulated based on player betting volume.</li>
+            <li><strong>Low-Latency Concurrency</strong>: Processing hundreds of cashout requests arriving in the exact same millisecond right before a crash, ensuring that successful cashouts are honored atomically while post-crash requests are rejected cleanly.</li>
+          </ul>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="case-section">
+          <h2>2. The Provably Fair Mathematical Formula</h2>
+          <p>
+            The crash point is calculated using cryptographic HMAC hashing combining three inputs:
+          </p>
+          <ul>
+            <li><strong>Server Seed</strong>: A 256-bit cryptographically secure random string generated server-side. Its SHA-256 hash is published <em>before</em> bets open.</li>
+            <li><strong>Client Seed</strong>: A public string contributed by players or derived from external public block hashes (e.g., Bitcoin block header), ensuring the operator cannot predict the outcome alone.</li>
+            <li><strong>Nonce</strong>: An incrementing integer tracking the total rounds played.</li>
+          </ul>
+
+          <div class="code-preview-box">
+<span class="code-comment">// Cryptographic Provably Fair Crash Point Generation</span>
+<span class="code-keyword">function</span> <span class="code-fn">calculateCrashPoint</span>(serverSeed, clientSeed, nonce) {
+  <span class="code-keyword">const</span> hmac = crypto.<span class="code-fn">createHmac</span>(<span class="code-str">'sha256'</span>, serverSeed);
+  hmac.<span class="code-fn">update</span>(<span class="code-str">`${clientSeed}:${nonce}`</span>);
+  <span class="code-keyword">const</span> hash = hmac.<span class="code-fn">digest</span>(<span class="code-str">'hex'</span>);
+
+  <span class="code-comment">// Take first 52 bits of hash</span>
+  <span class="code-keyword">const</span> hs = <span class="code-fn">parseInt</span>(hash.<span class="code-fn">slice</span>(0, 13), 16);
+  <span class="code-keyword">const</span> e = Math.<span class="code-fn">pow</span>(2, 52);
+
+  <span class="code-comment">// Instant crash house edge check (e.g. 3% instant crash at 1.00x)</span>
+  <span class="code-keyword">if</span> (hs % 33 === 0) <span class="code-keyword">return</span> 1.00;
+
+  <span class="code-keyword">const</span> multiplier = Math.<span class="code-fn">floor</span>((100 * e - hs) / (e - hs)) / 100;
+  <span class="code-keyword">return</span> Math.<span class="code-fn">max</span>(1.00, multiplier);
+}
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Real-Time Round Loop &amp; 50ms Tick Engine</h2>
+
+          <div class="code-preview-box">
+<span class="code-comment"># Crash Round State Machine</span>
+1. [Betting Phase (6 Seconds)]
+   ├── Accept Bets &amp; Lock User Table Balances (Redis Atomic Decr)
+   └── Publish Hashed Server Seed to All Players
+         │
+2. [Launch Phase (Rocket Ascending)]
+   ├── High-Resolution Tick Loop (50ms Interval)
+   ├── Multiplier Formula: M(t) = e^(0.06 * elapsed_seconds)
+   ├── Broadcast { tick, multiplier, active_players } via Socket.IO
+   └── Listen for Inbound Cashout Requests
+         │
+3. [Cashout Processing (Sub-Millisecond)]
+   ├── Atomic check: Is round still ACTIVE and current_multiplier &lt; crash_point?
+   ├── Calculate Win: Payout = BetAmount * CurrentMultiplier
+   └── Atomic Redis credit to Player Balance &amp; Broadcast Cashout Event
+         │
+4. [Crash Event &amp; Settlement]
+   ├── Elapsed Multiplier reaches Crash Point ➔ Trigger CRASH State
+   ├── Mark all un-cashed bets as BUST
+   ├── Reveal Unhashed Server Seed for Player Verification
+   └── Cooldown period (3 seconds) ➔ Initialize Next Round
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Concurrency Engineering: Preventing Race Conditions</h2>
+          <div class="callout-box">
+            <div class="callout-title">⚡ Atomic Cashout Isolation with Redis Lua</div>
+            <p style="margin: 0; color: var(--text-secondary);">
+              If a player clicks cashout at 1.99x while the server calculates crash at 2.00x, network packets can arrive simultaneously. Using <strong>Redis Lua scripts</strong>, the cashout check and balance crediting happen in a single atomic transaction. Either the cashout is registered strictly before the crash state flag is written, or it is rejected—guaranteeing zero double-spends and zero financial discrepancies.
+            </p>
+          </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building High-Throughput Real-Time Games?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            Whether you need provably fair algorithms, high-frequency tick loops, or atomic balance transactions, let's architect a resilient platform.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Design with Chetan</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

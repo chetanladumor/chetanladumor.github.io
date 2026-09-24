@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise E-Commerce Microservices: 42% Latency Reduction | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of an event-driven e-commerce microservices platform built with Node.js, Apache Kafka, RabbitMQ, and PostgreSQL by Chetan Ladumor.">
+  <meta name="keywords" content="E-Commerce Microservices Node.js, Apache Kafka Event Driven, RabbitMQ Checkout Decoupling, PostgreSQL Connection Pooling, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/ecommerce-microservices.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Enterprise E-Commerce Microservices Architecture | Chetan Ladumor">
+  <meta property="og:description" content="How Chetan Ladumor cut checkout latency by 42% using Kafka event-driven microservices and PgBouncer connection pooling.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-ecommerce.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/ecommerce-microservices.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Enterprise E-Commerce Microservices Suite: Event-Driven Kafka Architecture",
+    "description": "Architectural case study detailing the decoupling of synchronous checkout flows into event-driven microservices using Apache Kafka, RabbitMQ, and PostgreSQL.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-ecommerce.jpg",
+    "datePublished": "2025-01-20"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="https://github.com/chetanladumor/React-Ecom" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">GitHub Repo 🐙</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">E-Commerce Microservices</span>
+        </nav>
+
+        <span class="project-badge-tag tag-microservices" style="margin-bottom: 1rem; display: inline-block;">Enterprise &amp; Microservices</span>
+        <h1 class="case-study-title">Enterprise E-Commerce Microservices Suite</h1>
+        <p class="case-study-lead">
+          Engineered an event-driven architecture decomposing monolithic e-commerce flows into dedicated microservices, synchronizing asynchronous events via Apache Kafka and RabbitMQ to slash checkout latency by 42% during peak sales events.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Latency Impact</div>
+            <div class="meta-val">42% Latency Reduction at Checkout</div>
+          </div>
+          <div>
+            <div class="meta-label">Event Brokers</div>
+            <div class="meta-val">Apache Kafka &amp; RabbitMQ Queues</div>
+          </div>
+          <div>
+            <div class="meta-label">Database Optimization</div>
+            <div class="meta-val">PostgreSQL + PgBouncer Pooling</div>
+          </div>
+          <div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js, Express, Docker, WebSockets</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-ecommerce.jpg" alt="E-Commerce Microservices Event Flow" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <!-- Section 1 -->
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; The Monolith Bottleneck</h2>
+          <p>
+            In high-volume e-commerce platforms, checkout is the most critical revenue pathway. In legacy monolithic architectures, when a customer clicks "Place Order", the server attempts to execute everything sequentially:
+          </p>
+          <ol>
+            <li>Deduct inventory count from database</li>
+            <li>Call third-party payment gateway (Stripe/PayPal/Swedbank) synchronously</li>
+            <li>Trigger transactional email &amp; SMS delivery</li>
+            <li>Notify warehouse fulfillment APIs</li>
+          </ol>
+          <p>
+            If the payment gateway lags by 2 seconds, or the email API times out, the user experiences agonizing spinners and cart abandonment. During flash sales, thousands of simultaneous locks on the inventory table cause severe database deadlocks.
+          </p>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="case-section">
+          <h2>2. The Event-Driven Decoupled Architecture</h2>
+          <p>
+            I redesigned this flow into an <strong>asynchronous event-driven microservices topology</strong> orchestrated via Apache Kafka topics and RabbitMQ queues:
+          </p>
+
+          <div class="code-preview-box">
+<span class="code-comment"># Decoupled Checkout Event Topology</span>
+[Customer Client] ➔ (POST /api/checkout)
+       │
+       ▼
+[Order Gateway Service]
+       │
+       ├── Validate cart token &amp; signature
+       ├── Write Order record (Status: "PENDING_CONFIRMATION")
+       ├── Publish Event: <strong>`order.created`</strong> to Apache Kafka Topic
+       │
+       ▼ <strong>HTTP 200/202 Response Returned to User (Immediate ~180ms Turnaround)</strong>
+       
+       │
+       ├── <strong>Kafka Consumer: Inventory Service</strong>
+       │   └── Executes atomic reservation in Redis; falls back to PG locking
+       │
+       ├── <strong>Kafka Consumer: Payment Gateway Orchestrator</strong>
+       │   └── Dispatches payment intent to Stripe / Swedbank; publishes `payment.settled`
+       │
+       ├── <strong>Kafka Consumer: Notification Service (RabbitMQ)</strong>
+       │   └── Queues confirmation emails &amp; SMS notifications asynchronously
+       │
+       └── <strong>WebSocket Broadcasting Gateway</strong>
+           └── Pushes real-time order confirmation &amp; live shipping status to client
+          </div>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Database Scaling &amp; Connection Management</h2>
+          <div class="callout-box">
+            <div class="callout-title">🗄 PgBouncer Connection Pooling &amp; Index Tuning</div>
+            <p style="margin: 0; color: var(--text-secondary);">
+              Node.js asynchronous event loops can spawn thousands of concurrent connection attempts, overwhelming PostgreSQL's maximum connection limit. I implemented <strong>PgBouncer in transaction pooling mode</strong>, reducing idle database connections from 2,500 down to a stable pool of 100 dedicated connections. Combined with partial indexing on active orders, query execution time dropped by 65%.
+            </p>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Production Impact &amp; Results</h2>
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>Performance Metric</th>
+                <th>Legacy Synchronous Flow</th>
+                <th>Event-Driven Kafka Architecture</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Checkout Turnaround</strong></td>
+                <td>2,800ms – 4,500ms</td>
+                <td><strong>180ms – 320ms (42% Cut on overall checkout flow)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Inventory Locking Deadlocks</strong></td>
+                <td>Frequent under peak sales</td>
+                <td><strong>Zero Deadlocks (Atomic Redis pre-reservation)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Payment Gateway Timeout Impact</strong></td>
+                <td>Crashed user checkout request</td>
+                <td><strong>Graceful asynchronous retry via DLQ</strong></td>
+              </tr>
+              <tr>
+                <td><strong>Order Status Visibility</strong></td>
+                <td>Manual page refresh required</td>
+                <td><strong>Live push updates via WebSockets</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- CTA -->
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Scaling High-Volume E-Commerce or Microservices?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            From message queue decoupling to connection pooling and zero-downtime microservices architectures, let's connect.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Contact Chetan Ladumor</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

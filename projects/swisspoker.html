@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swisspoker Multiplayer Platform: Real-Time Poker &amp; MTT Architecture | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of Swisspoker: a scalable multiplayer Texas Hold'em & Omaha poker platform with Pokersolver hand evaluation, side-pot algorithms, MTT tournaments, and rake management by Chetan Ladumor.">
+  <meta name="keywords" content="Multiplayer Poker Backend Node.js, Socket.IO Poker Engine, Pokersolver Side Pot Algorithm, MTT Tournaments Node.js, Chetan Ladumor">
+  <meta name="author" content="Chetan V. Ladumor">
+  <link rel="canonical" href="https://chetanladumor.github.io/projects/swisspoker.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Swisspoker Multiplayer Platform Architecture | Chetan Ladumor">
+  <meta property="og:description" content="How Chetan Ladumor architected a scalable multiplayer poker platform with 50+ data models, complex side-pot math, and MTT tournament balancing.">
+  <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-poker.jpg">
+  <meta property="og:url" content="https://chetanladumor.github.io/projects/swisspoker.html">
+
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Swisspoker: Real-Time Multiplayer Texas Hold'em & Omaha Platform Architecture",
+    "description": "Architectural breakdown of a scalable poker gaming system supporting cash games, MTT tournaments, side-pot splitting algorithms, and multi-tier agent rake management.",
+    "author": {
+      "@type": "Person",
+      "name": "Chetan V. Ladumor",
+      "url": "https://chetanladumor.github.io/"
+    },
+    "image": "https://chetanladumor.github.io/assets/images/project-poker.jpg",
+    "datePublished": "2023-11-20"
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="container nav-container">
+        <a href="../index.html" class="nav-brand">
+          <img src="../assets/images/chetan-nav-avatar.png?v=2" alt="Chetan V. Ladumor" class="nav-brand-img" width="42" height="42">
+          <span>Chetan<span class="brand-dot">.</span>dev</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html#projects" class="nav-link">← All Projects</a></li>
+          <li><a href="../index.html#skills" class="nav-link">Skills</a></li>
+          <li><a href="../index.html#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="../index.html#contact" class="btn btn-outline btn-sm">Technical Advisory</a>
+          <a href="../assets/docs/Chetan_Ladumor_Resume.pdf" class="btn btn-primary btn-sm" download>Resume</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Case Study Hero -->
+    <section class="case-study-hero">
+      <div class="container case-study-header">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="../index.html">Home</a>
+          <span class="breadcrumbs-sep">/</span>
+          <a href="../index.html#projects">Projects</a>
+          <span class="breadcrumbs-sep">/</span>
+          <span style="color: #ffffff;">Swisspoker Multiplayer Platform</span>
+        </nav>
+
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; Multiplayer Systems</span>
+        <h1 class="case-study-title">Swisspoker Multiplayer Platform: Texas Hold'em &amp; MTT Architecture</h1>
+        <p class="case-study-lead">
+          A high-concurrency real-time poker ecosystem built with Node.js, Socket.IO, Redis, and MongoDB, featuring server-authoritative game state, dynamic multi-tier side pots, Pokersolver showdowns, MTT dynamic table rebalancing, and hierarchical rake commissions.
+        </p>
+
+        <div class="case-meta-grid">
+          <div>
+            <div class="meta-label">Game Variants</div>
+            <div class="meta-val">Texas Hold'em &amp; Omaha</div>
+          </div>
+          <div>
+            <div class="meta-label">Data Architecture</div>
+            <div class="meta-val">50+ MongoDB Models &amp; Redis Caching</div>
+          </div>
+          <div>
+            <div class="meta-label">Tournament Engine</div>
+            <div class="meta-val">MTT, Sit &amp; Go, Dynamic Table Balancing</div>
+          </div>
+          <div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js, Express, Socket.IO, Pokersolver</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 3.5rem;">
+      <div class="case-featured-img-box">
+        <img src="../assets/images/project-poker.jpg" alt="Swisspoker Table and Tournament System" class="case-featured-img" width="1200" height="750">
+      </div>
+
+      <div class="case-article">
+        <!-- Section 1 -->
+        <section class="case-section">
+          <h2>1. Executive Summary &amp; System Scope</h2>
+          <p>
+            Poker is one of the most mathematically rigorous and state-sensitive real-time applications to engineer. Unlike casual card games, poker involves high-stakes financial transactions, strict turn timers, multi-tier side pot splits across uneven all-in chip stacks, and server-authoritative security where client manipulation must be impossible.
+          </p>
+          <p>
+            I engineered the core backend architecture for Swisspoker, encompassing over <strong>50 database models</strong> spanning users, wallets, chip accounting, table states, tournament schedules, blind progressions, clubs, agent hierarchies, and audit logging.
+          </p>
+        </section>
+
+        <!-- Section 2 -->
+        <section class="case-section">
+          <h2>2. Supported Variants &amp; Hand Evaluation</h2>
+          <p>
+            The platform supports two major international poker game formats:
+          </p>
+          <ul>
+            <li>
+              <strong>Texas Hold'em</strong>: 2 private hole cards dealt to each player, followed by 5 community board cards (Flop, Turn, River). Players create the best possible 5-card combination from any mix of hole and board cards.
+            </li>
+            <li>
+              <strong>Omaha</strong>: 4 private hole cards dealt to each player. Crucially, players <em>must use exactly 2 hole cards and exactly 3 community board cards</em> to form their final hand.
+            </li>
+          </ul>
+          <p>
+            At the Showdown stage, the backend leverages an optimized <code>Pokersolver</code> evaluation algorithm to rank hands from Royal Flush down to High Card, resolving tie-breakers and kicker card comparisons instantaneously.
+          </p>
+        </section>
+
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Cash Game Hand Lifecycle &amp; State Machine</h2>
+          
+          <div class="code-preview-box">
+<span class="code-comment"># Cash Game Table State Machine</span>
+1. [Seat Reservation &amp; Buy-In]
+   ├── Balance Validation → Deduct Wallet → Credit Table Stack
+   └── Seat Assignment &amp; Player Broadcast
+         │
+2. [Hand Initialization]
+   ├── Rotate Dealer Button, Small Blind (SB), Big Blind (BB)
+   └── Collect Forced Blind Bets → Initialize Main Pot
+         │
+3. [Card Dealing]
+   ├── Server-Side Cryptographic Deck Shuffle
+   └── Deliver Private Hole Cards (Socket Event strictly to owning socket)
+         │
+4. [Betting Rounds: Pre-Flop ➔ Flop ➔ Turn ➔ River]
+   ├── 30-Second Turn Countdown (Server Authoritative)
+   ├── Validate Action: Fold | Check | Call | Raise | All-In
+   ├── Update Pot &amp; Check Stack Bounds
+   └── If everyone folds ➔ Award pot immediately; Else reveal next board card
+         │
+5. [Showdown &amp; Pot Distribution]
+   ├── Pokersolver Hand Evaluation
+   ├── Resolve Multi-Tier Side Pots
+   ├── Deduct Rake Commission (with Cap)
+   └── Atomic Credit to Winner Stack &amp; Hand History Log
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Deep Dive: Dynamic Side Pot Management</h2>
+          <p>
+            One of the most complex algorithmic requirements in poker is handling <strong>multiple simultaneous all-ins with uneven chip stacks</strong>.
+          </p>
+
+          <div class="callout-box">
+            <div class="callout-title">📐 The Side Pot Algorithm</div>
+            <p style="margin: 0; color: var(--text-secondary);">
+              <strong>Scenario:</strong> Player A has 100 chips, Player B has 500 chips, and Player C has 1,000 chips. All three go all-in.<br><br>
+              1. <strong>Main Pot (300 chips):</strong> 100 chips from Player A, 100 from Player B, and 100 from Player C. All three players are eligible to win this pot.<br>
+              2. <strong>Side Pot 1 (800 chips):</strong> Remaining 400 from Player B and matched 400 from Player C. Only Player B and Player C are eligible.<br>
+              3. <strong>Side Pot 2 (500 chips):</strong> Remaining 500 from Player C uncontested, refunded back to Player C immediately.<br><br>
+              The engine sorts all active bets, creates discrete side-pot buckets, links player eligibility sets to each bucket, and evaluates winner hands for each pot in descending sequence.
+            </p>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section class="case-section">
+          <h2>5. Multi-Table Tournament (MTT) Architecture</h2>
+          <p>
+            The tournament subsystem powers large-scale competitive events:
+          </p>
+          <ul>
+            <li><strong>Automated Blind Structures</strong>: Blinds escalate on strict scheduled intervals (e.g., Level 1: 25/50 ➔ Level 2: 50/100 ➔ Level 3: 100/200), forcing action and pacing tournament duration.</li>
+            <li><strong>Dynamic Table Balancing</strong>: As players run out of chips and are eliminated, tables become uneven (e.g., Table 1 has 3 players while Table 2 has 8). The system executes an automated rebalancing algorithm, picking players from larger tables and transferring their seat and chip stack seamlessly between hands without disrupting ongoing action.</li>
+            <li><strong>Tiered Payout Distribution</strong>: Predefined prize structures automatically calculate final settlements (e.g., 1st: 50%, 2nd: 30%, 3rd: 20%) when the final table resolves.</li>
+          </ul>
+        </section>
+
+        <!-- Section 6 -->
+        <section class="case-section">
+          <h2>6. Rake Management &amp; MLM Agent Hierarchy</h2>
+          <p>
+            To support commercial iGaming club operations, the platform implements a hierarchical rake commission engine:
+          </p>
+          <ul>
+            <li><strong>Dynamic Rake Percentages &amp; Caps</strong>: Deducts a configurable percentage (typically 3%–5%) from cash pots, subject to a maximum cap per hand. "No Flop, No Drop" policy enforced.</li>
+            <li><strong>Agent Commission Trees (MLM)</strong>: Commissions flow automatically through multi-level hierarchies: <code>Master Agent ➔ Super Agent ➔ Sub-Agent ➔ Player</code>. Each tier receives automated real-time rake rebates credited to their operational wallets.</li>
+          </ul>
+        </section>
+
+        <!-- CTA -->
+        <div class="case-cta-card">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Architecting a Scalable Gaming Platform?</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+            From server-authoritative state synchronization to complex financial transactions and tournament engines, let's discuss your project.
+          </p>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Contact Chetan Ladumor</a>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-text">
+        © 2026 <strong>Chetan V. Ladumor</strong>. Senior Node.js Developer &amp; Backend Systems Architect.
+      </div>
+      <ul class="footer-nav">
+        <li><a href="../index.html">Portfolio Home</a></li>
+        <li><a href="https://github.com/chetanladumor" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/chetan-ladumor" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

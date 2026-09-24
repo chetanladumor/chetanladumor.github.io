@@ -7,6 +7,7 @@
 const PROJECTS_DATA = [
   {
     id: 'spillorama-bingo',
+    caseStudyUrl: 'projects/spillorama-bingo.html',
     title: 'Spillorama Multi-Game Bingo Infrastructure',
     subtitle: 'AIS Technolabs (Norway Client)',
     category: 'gaming',
@@ -22,6 +23,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'swisspoker',
+    caseStudyUrl: 'projects/swisspoker.html',
     title: 'Swisspoker Multiplayer Poker Platform',
     subtitle: 'AIS Technolabs',
     category: 'gaming',
@@ -37,6 +39,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'crash-game',
+    caseStudyUrl: 'projects/crash-game.html',
     title: 'Provably Fair Multiplayer Crash Game Engine',
     subtitle: 'AIS Technolabs',
     category: 'gaming',
@@ -51,6 +54,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'ai-pr-review',
+    caseStudyUrl: 'projects/ai-code-reviewer.html',
     title: 'AI-Based PR & Commit Review Automation',
     subtitle: 'Independent Engineering Initiative',
     category: 'ai',
@@ -66,6 +70,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'ai-customer-support',
+    caseStudyUrl: 'projects/ai-customer-support.html',
     title: 'Multi-Agent AI Customer Support Platform',
     subtitle: 'Enterprise AI Architecture',
     category: 'ai',
@@ -81,6 +86,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'ecommerce-microservices',
+    caseStudyUrl: 'projects/ecommerce-microservices.html',
     title: 'Enterprise E-Commerce Microservices Suite',
     subtitle: 'High-Volume Production Platform',
     category: 'enterprise',
@@ -96,6 +102,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'wewatchover-health',
+    caseStudyUrl: 'projects/wewatchover-health.html',
     title: 'WeWatchOver – Health & Biometric Monitoring',
     subtitle: 'Production IoT Backend',
     category: 'health',
@@ -110,6 +117,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'lottery-jackpot',
+    caseStudyUrl: 'projects/lottery-jackpot.html',
     title: 'Online Lottery & Automated Draw Engine',
     subtitle: 'Jackpot Aruba / Emirates Draw Architecture',
     category: 'gaming',
@@ -124,6 +132,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'dating-anyflawa',
+    caseStudyUrl: 'projects/dating-anyflawa.html',
     title: 'Anyflawa Geospatial Matchmaking & Real-Time Chat',
     subtitle: 'Location-Aware Social Platform',
     category: 'health',
@@ -138,6 +147,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'belote-multiplayer',
+    caseStudyUrl: 'projects/ladepeche-belote.html',
     title: 'Ladepeche Belote Real-Time Multiplayer Card Game',
     subtitle: 'AIS Technolabs (France Ecosystem)',
     category: 'gaming',
@@ -152,6 +162,7 @@ const PROJECTS_DATA = [
   },
   {
     id: 'slot-game',
+    caseStudyUrl: 'projects/slot-game.html',
     title: 'Scalable RNG Slot Game Engine',
     subtitle: 'High-Concurrency Real-Time Gaming',
     category: 'gaming',
@@ -260,12 +271,13 @@ function renderProjects(items) {
         <p class="project-desc">${proj.desc}</p>
         <div class="project-tags">${tagsHtml}</div>
         <div class="project-footer">
-          <button class="project-btn-detail" onclick="openProjectModal('${proj.id}')" aria-label="View architecture of ${proj.title}">
-            Architecture & Details <span>→</span>
-          </button>
+          <a href="${proj.caseStudyUrl}" class="project-btn-detail" aria-label="Read full case study for ${proj.title}">
+            In-Depth Case Study <span>→</span>
+          </a>
           <div class="project-external-links">
             ${proj.youtubeUrl ? `<a href="${proj.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="Watch Video Demo" aria-label="YouTube Demo">📺</a>` : ''}
             ${proj.githubUrl ? `<a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="View Source on GitHub" aria-label="GitHub Repo">🐙</a>` : ''}
+            <button onclick="openProjectModal('${proj.id}')" class="project-ext-icon" title="Quick Architecture Modal" style="background: none; border: none; cursor: pointer; font-size: 1.05rem;" aria-label="Quick Modal">🔍</button>
           </div>
         </div>
       </div>
@@ -417,22 +429,19 @@ window.openProjectModal = function(projectId) {
   const techWrap = document.getElementById('modal-pills');
   techWrap.innerHTML = proj.techs.map(t => `<span class="skill-pill active">${t}</span>`).join('');
 
+  const caseStudyBtn = document.getElementById('modal-casestudy-btn');
+  if (caseStudyBtn) {
+    caseStudyBtn.href = proj.caseStudyUrl;
+  }
+
   const liveAction = document.getElementById('modal-live-btn');
   const gitAction = document.getElementById('modal-git-btn');
 
   if (proj.youtubeUrl) {
     liveAction.style.display = 'inline-flex';
     liveAction.href = proj.youtubeUrl;
-    liveAction.textContent = 'Watch Video Demo 📺';
-    liveAction.onclick = null;
   } else {
-    liveAction.style.display = 'inline-flex';
-    liveAction.href = '#contact';
-    liveAction.textContent = 'Discuss System Architecture 💬';
-    liveAction.onclick = () => {
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-    };
+    liveAction.style.display = 'none';
   }
 
   if (proj.githubUrl) {
