@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chetanladumor.github.io/sitemap.xml
