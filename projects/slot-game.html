@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scalable RNG Slot Game Engine: Real-Time Reel Simulation | Chetan V. Ladumor</title>
-  <meta name="description" content="In-depth architectural case study of a scalable real-time RNG Slot game engine featuring configurable paylines, reel strip simulation, RTP models, and atomic balance transactions by Chetan Ladumor.">
-  <meta name="keywords" content="Slot Game Engine Node.js, RNG Gaming Engine, Reel Strip Simulation, Socket.IO Casino Games, Chetan Ladumor">
+  <title>Scalable RNG Slot Game Engine Architecture | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of a real-time RNG slot game backend featuring certified PRNG reel simulation, payline evaluation, and atomic wallet transactions by Chetan Ladumor.">
+  <meta name="keywords" content="RNG Slot Engine Node.js, Casino Game Server Architecture, Real-Time Payline Evaluation, Socket.IO Gaming, Chetan Ladumor">
   <meta name="author" content="Chetan V. Ladumor">
   <link rel="canonical" href="https://chetanladumor.github.io/projects/slot-game.html">
 
   <meta property="og:type" content="article">
   <meta property="og:title" content="Scalable RNG Slot Game Engine Architecture | Chetan Ladumor">
-  <meta property="og:description" content="Real-time spin lifecycle, configurable paytable evaluations, and atomic wallet settlements in high-concurrency Node.js.">
+  <meta property="og:description" content="Deep dive into server-authoritative reel strip simulation, multi-payline calculation, and atomic balance transactions in Node.js.">
   <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-slot-game.jpg">
   <meta property="og:url" content="https://chetanladumor.github.io/projects/slot-game.html">
 
@@ -26,14 +26,14 @@
     "@context": "https://schema.org",
     "@type": "TechArticle",
     "headline": "Scalable RNG Slot Game Engine Architecture",
-    "description": "Architectural breakdown of an RNG slot game backend handling spin lifecycles, reel strip simulations, free spin triggers, and atomic financial balance settlements.",
+    "description": "Architectural breakdown of a real-time slot game backend with certified cryptographic PRNG reel simulation, dynamic payline evaluation, and atomic wallet transactions.",
     "author": {
       "@type": "Person",
       "name": "Chetan V. Ladumor",
       "url": "https://chetanladumor.github.io/"
     },
     "image": "https://chetanladumor.github.io/assets/images/project-slot-game.jpg",
-    "datePublished": "2022-09-10"
+    "datePublished": "2023-06-15"
   }
   </script>
 </head>
@@ -62,6 +62,7 @@
   </header>
 
   <main>
+    <!-- Case Study Hero -->
     <section class="case-study-hero">
       <div class="container case-study-header">
         <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -69,66 +70,93 @@
           <span class="breadcrumbs-sep">/</span>
           <a href="../index.html#projects">Projects</a>
           <span class="breadcrumbs-sep">/</span>
-          <span style="color: #ffffff;">Scalable RNG Slot Game</span>
+          <span style="color: #ffffff;">RNG Slot Game Engine</span>
         </nav>
 
-        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; RNG Systems</span>
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 0.8rem; display: inline-block;">iGaming &amp; Real-Time Systems</span>
         <h1 class="case-study-title">Scalable RNG Slot Game Engine Architecture</h1>
         <p class="case-study-lead">
-          Contributed to a scalable real-time slot game backend featuring configurable paylines, reel strip simulation, symbol weighting, RTP verification, and atomic wallet transactions under high spin concurrency.
+          A high-concurrency real-time Slot game backend featuring certified cryptographic PRNG reel strip simulation, dynamic multi-payline evaluation, bonus state machines, and atomic financial balance transactions.
         </p>
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Reel Engine</div>
-            <div class="meta-val">RNG Symbol Generation &amp; Strip Mapping</div>
+            <div class="meta-label">Response Latency</div>
+            <div class="meta-val">Sub-15ms Spin Calculation</div>
           </div>
           <div>
-            <div class="meta-label">Payline Math</div>
-            <div class="meta-val">Multi-line, Cascading &amp; Multipliers</div>
+            <div class="meta-label">RNG Engine</div>
+            <div class="meta-val">Cryptographically Secure PRNG (Fortuna)</div>
           </div>
           <div>
-            <div class="meta-label">Concurrency</div>
-            <div class="meta-val">Atomic Balance Updates via Redis</div>
+            <div class="meta-label">State &amp; Balance</div>
+            <div class="meta-val">Atomic Redis State + MongoDB Audit Ledger</div>
           </div>
           <div>
             <div class="meta-label">Core Runtime</div>
-            <div class="meta-val">Node.js, Socket.IO, MySQL, Redis</div>
+            <div class="meta-val">Node.js, Express, Socket.IO, PM2, Docker</div>
           </div>
         </div>
       </div>
     </section>
 
-    <article class="container" style="padding-top: 3.5rem;">
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-slot-game.jpg" alt="RNG Slot Game Engine Preview" class="case-featured-img" width="1200" height="750">
       </div>
 
       <div class="case-article">
+        <!-- Section 1 -->
         <section class="case-section">
           <h2>1. Executive Summary &amp; Engine Mechanics</h2>
           <p>
-            Slot games require sub-second spin responses, mathematical compliance with certified RTP (Return to Player) percentages, and guaranteed balance accuracy across millions of spins per day.
+            Slot game architectures demand sub-second spin responses, regulatory compliance with certified RTP (Return to Player) payout models, and absolute balance accuracy across millions of spins per day.
           </p>
           <p>
-            I contributed to the spin lifecycle, bet placements, reel simulation, scatter/wild bonus triggers, and wallet reconciliation, ensuring low-latency Socket.IO event updates.
+            The backend manages the entire spin lifecycle: client bet ingestion, cryptographic reel strip positioning, multi-payline matrix evaluation, scatter/wild bonus feature state machines, and atomic wallet debits and credits.
           </p>
         </section>
 
+        <!-- Section 2 -->
         <section class="case-section">
           <h2>2. The Spin Lifecycle &amp; Paytable Evaluation</h2>
           <ul>
-            <li><strong>RNG Stop Generation</strong>: A cryptographically secure RNG generates stop indexes for each virtual reel strip.</li>
-            <li><strong>Payline Mapping</strong>: The resulting matrix is evaluated against configured payline patterns (horizontal, diagonal, zigzag) to calculate base game payouts.</li>
-            <li><strong>Feature Triggers</strong>: Scatters trigger free spin sessions with multiplier multipliers, while Wild symbols substitute for standard paytable symbols.</li>
-            <li><strong>Atomic Financial Settlement</strong>: Bet deductions and payout credits execute atomically to prevent balance desynchronization under rapid auto-spin intervals.</li>
+            <li><strong>Cryptographic Stop Generation</strong>: A cryptographically secure PRNG generates stop indexes for each virtual reel strip according to configured symbol weighting tables.</li>
+            <li><strong>Payline Mapping</strong>: The resulting 3x5 or 4x5 symbol matrix is evaluated across configured payline patterns (horizontal, diagonal, zigzag) to calculate base game winning combinations in memory.</li>
+            <li><strong>Feature State Machine</strong>: Scatter symbols trigger free spin bonus states with win multipliers, while Wild symbols substitute dynamically across payline checks.</li>
+            <li><strong>Atomic Financial Settlement</strong>: Bet deductions and payout credits execute atomically using in-memory guards to eliminate double-spend risks during high-frequency auto-spin rounds.</li>
           </ul>
         </section>
 
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Full Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Core Runtime</div>
+              <div class="meta-val">Node.js (ES6+), Express.js</div>
+            </div>
+            <div>
+              <div class="meta-label">Real-Time Sockets</div>
+              <div class="meta-val">Socket.IO, WebSockets, Events</div>
+            </div>
+            <div>
+              <div class="meta-label">Cryptography &amp; Math</div>
+              <div class="meta-val">Javascript-Fortuna PRNG, Exact-Math</div>
+            </div>
+            <div>
+              <div class="meta-label">Databases &amp; State</div>
+              <div class="meta-val">MongoDB, Mongoose, Redis In-Memory State</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CTA -->
         <div class="case-cta-card">
           <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building High-Speed Casino or Gaming Engines?</h2>
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
-            From reel strip math and RTP verification to real-time wallet settlement pipelines, let's connect.
+            From reel strip simulation and RTP compliance to real-time wallet settlement pipelines, let's connect.
           </p>
           <a href="../index.html#contact" class="btn btn-primary btn-lg">Contact Chetan Ladumor</a>
         </div>

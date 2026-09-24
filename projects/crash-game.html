@@ -11,7 +11,7 @@
 
   <meta property="og:type" content="article">
   <meta property="og:title" content="Provably Fair Crash Game Engine Architecture | Chetan Ladumor">
-  <meta property="og:description" content="Deep dive into SHA-256 provably fair verification, exponential multiplier curves, and sub-millisecond cashouts in Node.js.">
+  <meta property="og:description" content="Deep dive into SHA-256 provably fair verification, high-frequency tick broadcasting, and sub-millisecond atomic cashouts in Node.js.">
   <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-crash-game.jpg">
   <meta property="og:url" content="https://chetanladumor.github.io/projects/crash-game.html">
 
@@ -73,35 +73,35 @@
           <span style="color: #ffffff;">Provably Fair Crash Game</span>
         </nav>
 
-        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; High Concurrency</span>
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 0.8rem; display: inline-block;">iGaming &amp; High Concurrency</span>
         <h1 class="case-study-title">Provably Fair Multiplayer Crash Game Engine</h1>
         <p class="case-study-lead">
-          A high-frequency real-time betting platform capable of handling thousands of simultaneous bets per round, powered by SHA-256 cryptographic provably fair seeds, 50ms exponential curve broadcasting, and sub-millisecond atomic cashouts.
+          A high-frequency real-time betting platform capable of processing thousands of simultaneous bets per round, powered by SHA-256 cryptographic provably fair verification, 50ms state broadcasting, and sub-millisecond atomic cashouts.
         </p>
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Tick Rate</div>
-            <div class="meta-val">50ms Real-Time Multiplier Ticks</div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js (ES6+), Express.js</div>
           </div>
           <div>
-            <div class="meta-label">Fairness Standard</div>
-            <div class="meta-val">100% SHA-256 Cryptographic Verification</div>
+            <div class="meta-label">Real-Time Networking</div>
+            <div class="meta-val">Socket.IO, WebSockets, Redis Adapter</div>
           </div>
           <div>
-            <div class="meta-label">Cashout Processing</div>
-            <div class="meta-val">Sub-Millisecond Atomic Execution</div>
+            <div class="meta-label">Fairness &amp; Security</div>
+            <div class="meta-val">HMAC-SHA256, Fortuna PRNG, Joi</div>
           </div>
           <div>
-            <div class="meta-label">Tech Stack</div>
-            <div class="meta-val">Node.js, WebSockets, Redis, PostgreSQL</div>
+            <div class="meta-label">Data &amp; State Tier</div>
+            <div class="meta-val">Redis Lua Scripts, MongoDB (Mongoose)</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-crash-game.jpg" alt="Provably Fair Crash Game Architecture" class="case-featured-img" width="1200" height="750">
       </div>
@@ -109,88 +109,101 @@
       <div class="case-article">
         <!-- Section 1 -->
         <section class="case-section">
-          <h2>1. Executive Summary &amp; Game Mechanics</h2>
+          <h2>1. Executive Summary &amp; System Challenges</h2>
           <p>
-            Crash has emerged as one of the most popular formats in contemporary online gaming. In every round, a rocket or curve ascends with an increasing multiplier starting at <code>1.00x</code> and growing exponentially. Players place bets before launch and must hit "Cash Out" before the rocket crashes at an unpredictable threshold.
+            Multiplayer Crash is an intensive real-time iGaming format where a multiplier curve ascends dynamically from 1.00x upwards. Players place bets during a pre-round countdown and attempt to cash out before the rocket crashes at an unpredictable threshold.
           </p>
           <p>
-            The two critical technical pillars of this project are:
+            From a systems engineering standpoint, Crash presents two non-negotiable architectural requirements:
           </p>
           <ul>
-            <li><strong>Provably Fair Cryptography</strong>: Mathematically proving to skeptical players that the crash point was predetermined before bets were placed, and was not manipulated based on player betting volume.</li>
-            <li><strong>Low-Latency Concurrency</strong>: Processing hundreds of cashout requests arriving in the exact same millisecond right before a crash, ensuring that successful cashouts are honored atomically while post-crash requests are rejected cleanly.</li>
+            <li><strong>Cryptographic Provable Fairness</strong>: Guaranteeing to players and regulators that the crash point is predetermined before bets open and cannot be manipulated based on total wagering volume.</li>
+            <li><strong>Sub-Millisecond Concurrency &amp; Race Condition Prevention</strong>: Handling hundreds of cashout requests arriving in the exact same millisecond immediately prior to a crash, guaranteeing atomic balance crediting without double-spends.</li>
           </ul>
         </section>
 
         <!-- Section 2 -->
         <section class="case-section">
-          <h2>2. The Provably Fair Mathematical Formula</h2>
+          <h2>2. Cryptographic Fairness &amp; Verification Architecture</h2>
           <p>
-            The crash point is calculated using cryptographic HMAC hashing combining three inputs:
+            Fairness is guaranteed through a public commitment scheme combining three cryptographically isolated seeds:
           </p>
           <ul>
-            <li><strong>Server Seed</strong>: A 256-bit cryptographically secure random string generated server-side. Its SHA-256 hash is published <em>before</em> bets open.</li>
-            <li><strong>Client Seed</strong>: A public string contributed by players or derived from external public block hashes (e.g., Bitcoin block header), ensuring the operator cannot predict the outcome alone.</li>
-            <li><strong>Nonce</strong>: An incrementing integer tracking the total rounds played.</li>
+            <li><strong>Server Seed Pre-Commitment</strong>: A 256-bit cryptographically secure seed is generated on the server using the Fortuna PRNG algorithm. Its SHA-256 hash is published to all connected clients <em>before</em> wagering opens. Because the hash is public, the server cannot alter the outcome mid-round.</li>
+            <li><strong>Client Seed Entropy Injection</strong>: A public seed provided by players or derived from external public block headers. This guarantees the operator could not have pre-calculated a seed favorable solely to the house.</li>
+            <li><strong>Sequential Nonce Tracking</strong>: A strictly incrementing counter tracking total lifetime rounds for complete audit trail linkage.</li>
+            <li><strong>Post-Round Verification</strong>: The instant a round crashes, the unhashed Server Seed is revealed. Clients can locally reproduce the cryptographic hash and confirm that the outcome matched the pre-committed hash.</li>
           </ul>
-
-          <div class="code-preview-box">
-<span class="code-comment">// Cryptographic Provably Fair Crash Point Generation</span>
-<span class="code-keyword">function</span> <span class="code-fn">calculateCrashPoint</span>(serverSeed, clientSeed, nonce) {
-  <span class="code-keyword">const</span> hmac = crypto.<span class="code-fn">createHmac</span>(<span class="code-str">'sha256'</span>, serverSeed);
-  hmac.<span class="code-fn">update</span>(<span class="code-str">`${clientSeed}:${nonce}`</span>);
-  <span class="code-keyword">const</span> hash = hmac.<span class="code-fn">digest</span>(<span class="code-str">'hex'</span>);
-
-  <span class="code-comment">// Take first 52 bits of hash</span>
-  <span class="code-keyword">const</span> hs = <span class="code-fn">parseInt</span>(hash.<span class="code-fn">slice</span>(0, 13), 16);
-  <span class="code-keyword">const</span> e = Math.<span class="code-fn">pow</span>(2, 52);
-
-  <span class="code-comment">// Instant crash house edge check (e.g. 3% instant crash at 1.00x)</span>
-  <span class="code-keyword">if</span> (hs % 33 === 0) <span class="code-keyword">return</span> 1.00;
-
-  <span class="code-keyword">const</span> multiplier = Math.<span class="code-fn">floor</span>((100 * e - hs) / (e - hs)) / 100;
-  <span class="code-keyword">return</span> Math.<span class="code-fn">max</span>(1.00, multiplier);
-}
-          </div>
         </section>
 
         <!-- Section 3 -->
         <section class="case-section">
-          <h2>3. Real-Time Round Loop &amp; 50ms Tick Engine</h2>
+          <h2>3. Real-Time Round Lifecycle &amp; State Engine</h2>
+          <p>
+            The game loop executes via an in-memory high-precision timer decoupled from database I/O to guarantee zero latency jitter:
+          </p>
 
           <div class="code-preview-box">
-<span class="code-comment"># Crash Round State Machine</span>
-1. [Betting Phase (6 Seconds)]
-   ├── Accept Bets &amp; Lock User Table Balances (Redis Atomic Decr)
-   └── Publish Hashed Server Seed to All Players
+<span class="code-comment"># Real-Time Crash State Loop Topology</span>
+[Phase 1: Wagering Window (6 Seconds)]
+   ├── Accept Bets via WebSocket (Joi Input Sanitization)
+   ├── Atomic User Balance Reservation (Redis DECRBY)
+   └── Broadcast Hashed Server Seed &amp; Active Player List
          │
-2. [Launch Phase (Rocket Ascending)]
-   ├── High-Resolution Tick Loop (50ms Interval)
-   ├── Multiplier Formula: M(t) = e^(0.06 * elapsed_seconds)
-   ├── Broadcast { tick, multiplier, active_players } via Socket.IO
-   └── Listen for Inbound Cashout Requests
+[Phase 2: Ascending Flight Phase (50ms Micro-Tick)]
+   ├── High-Resolution 50ms Tick Loop Driven by Server Clock
+   ├── Broadcast Incremental Multiplier &amp; Live Bets via Socket.IO
+   └── Concurrently Listen for Inbound Player Cashout Requests
          │
-3. [Cashout Processing (Sub-Millisecond)]
-   ├── Atomic check: Is round still ACTIVE and current_multiplier &lt; crash_point?
-   ├── Calculate Win: Payout = BetAmount * CurrentMultiplier
-   └── Atomic Redis credit to Player Balance &amp; Broadcast Cashout Event
+[Phase 3: Sub-Millisecond Cashout Processing]
+   ├── Evaluate Atomic In-Memory Guard (Round Active &amp; Below Crash Point)
+   ├── Compute Payout Credit &amp; Atomic Ledger Write (Redis Lua Script)
+   └── Broadcast Real-Time Player Cashout Event to Room
          │
-4. [Crash Event &amp; Settlement]
-   ├── Elapsed Multiplier reaches Crash Point ➔ Trigger CRASH State
-   ├── Mark all un-cashed bets as BUST
-   ├── Reveal Unhashed Server Seed for Player Verification
-   └── Cooldown period (3 seconds) ➔ Initialize Next Round
+[Phase 4: Crash Settlement &amp; Cooldown]
+   ├── Target Multiplier Reached ➔ Atomic Transition to CRASHED State
+   ├── Mark All Un-Cashed Bets as BUST
+   ├── Reveal Raw Server Seed for Player Verification
+   ├── Asynchronous MongoDB Flush (Round History, Wins, Financial Ledger)
+   └── 3-Second Cooldown ➔ Initialize Next Round
           </div>
         </section>
 
         <!-- Section 4 -->
         <section class="case-section">
-          <h2>4. Concurrency Engineering: Preventing Race Conditions</h2>
+          <h2>4. Concurrency Engineering: Atomic Redis Lua Scripts</h2>
           <div class="callout-box">
-            <div class="callout-title">⚡ Atomic Cashout Isolation with Redis Lua</div>
+            <div class="callout-title">⚡ Preventing Concurrency Race Conditions</div>
             <p style="margin: 0; color: var(--text-secondary);">
-              If a player clicks cashout at 1.99x while the server calculates crash at 2.00x, network packets can arrive simultaneously. Using <strong>Redis Lua scripts</strong>, the cashout check and balance crediting happen in a single atomic transaction. Either the cashout is registered strictly before the crash state flag is written, or it is rejected—guaranteeing zero double-spends and zero financial discrepancies.
+              If a player clicks cashout at 1.99x while the server calculates a crash at 2.00x, network packets arrive simultaneously. Traditional multi-query database transactions introduce lock contention and race conditions. By executing the cashout check, state validation, and balance crediting inside a <strong>single Redis Lua script</strong>, the operation is completely serialized and atomic. Either the cashout is recorded strictly prior to the crash flag, or it is rejected cleanly—guaranteeing zero financial discrepancies.
             </p>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section class="case-section">
+          <h2>5. Comprehensive Technology Stack</h2>
+          <div class="workflow-steps-list">
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">1</div>
+              <h3 class="workflow-step-title">Core Runtime &amp; Frameworks</h3>
+              <p>Node.js (ES6+), Express.js, Socket.IO, Socket.IO-Client, Body-Parser, Express-Session, DateFormat.</p>
+            </div>
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">2</div>
+              <h3 class="workflow-step-title">Cryptography &amp; Mathematics</h3>
+              <p>HMAC-SHA256, <code>js-sha256</code>, <code>crypto-js</code>, <code>javascript-fortuna</code> (Cryptographic PRNG), <code>exact-math</code> (arbitrary-precision financial arithmetic).</p>
+            </div>
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">3</div>
+              <h3 class="workflow-step-title">Databases &amp; High-Throughput State</h3>
+              <p>Redis (Lua scripting, in-memory state flags, atomic counters), MongoDB, Mongoose ORM, Session-File-Store.</p>
+            </div>
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">4</div>
+              <h3 class="workflow-step-title">Security &amp; Operational Tooling</h3>
+              <p>Joi schema validation, JSONWebToken (JWT), BcryptJS, Winston Logger, Winston Daily Rotate File, PM2 Process Manager, Docker.</p>
+            </div>
           </div>
         </section>
 
@@ -198,7 +211,7 @@
         <div class="case-cta-card">
           <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building High-Throughput Real-Time Games?</h2>
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
-            Whether you need provably fair algorithms, high-frequency tick loops, or atomic balance transactions, let's architect a resilient platform.
+            Whether you need provably fair verification schemes, high-frequency tick loops, or atomic balance transactions, let's architect a resilient platform.
           </p>
           <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Design with Chetan</a>
         </div>

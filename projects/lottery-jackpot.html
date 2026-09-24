@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lottery Gaming Platform: Pick 3/4/5 Automated Draw Engine | Chetan V. Ladumor</title>
-  <meta name="description" content="In-depth architectural case study of an online lottery platform featuring Pick 3/4/5 game modes, automated draw scheduling, cryptographic seeds, and distributed prize calculations by Chetan Ladumor.">
-  <meta name="keywords" content="Online Lottery Platform Node.js, Automated Draw Engine, Jackpot Aruba Architecture, Redis Distributed Locks, Chetan Ladumor">
+  <title>Online Lottery &amp; Automated Draw Engine | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of an online lottery platform featuring automated draw workers, cryptographic seed generation, and distributed ticket prize evaluation by Chetan Ladumor.">
+  <meta name="keywords" content="Online Lottery Platform Node.js, Automated Draw Engine, Distributed Ticket Evaluation, Redis Locks Lottery, Chetan Ladumor">
   <meta name="author" content="Chetan V. Ladumor">
   <link rel="canonical" href="https://chetanladumor.github.io/projects/lottery-jackpot.html">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Lottery Gaming Platform Architecture | Chetan Ladumor">
-  <meta property="og:description" content="End-to-end automated lottery draw engine with ticket validation and prize distribution algorithms.">
+  <meta property="og:title" content="Online Lottery &amp; Automated Draw Engine Architecture | Chetan Ladumor">
+  <meta property="og:description" content="Scalable lottery engine architecture featuring cryptographic ball selection, distributed Redis locking, and automated prize reconciliation.">
   <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-lottery.jpg">
   <meta property="og:url" content="https://chetanladumor.github.io/projects/lottery-jackpot.html">
 
@@ -25,15 +25,15 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "Online Lottery Gaming Platform: Automated Draw & Validation Engine",
-    "description": "Architectural case study of an online lottery platform supporting Pick 3, Pick 4, and Pick 5 with automated draw execution and zero-duplicate distributed lock safeguards.",
+    "headline": "Online Lottery & Automated Draw Engine Architecture",
+    "description": "Architectural breakdown of an online lottery system featuring automated scheduled draws, cryptographic seed generation, and distributed ticket evaluation.",
     "author": {
       "@type": "Person",
       "name": "Chetan V. Ladumor",
       "url": "https://chetanladumor.github.io/"
     },
     "image": "https://chetanladumor.github.io/assets/images/project-lottery.jpg",
-    "datePublished": "2023-06-20"
+    "datePublished": "2024-05-12"
   }
   </script>
 </head>
@@ -62,6 +62,7 @@
   </header>
 
   <main>
+    <!-- Case Study Hero -->
     <section class="case-study-hero">
       <div class="container case-study-header">
         <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -69,23 +70,23 @@
           <span class="breadcrumbs-sep">/</span>
           <a href="../index.html#projects">Projects</a>
           <span class="breadcrumbs-sep">/</span>
-          <span style="color: #ffffff;">Lottery Gaming Platform</span>
+          <span style="color: #ffffff;">Online Lottery Platform</span>
         </nav>
 
-        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; Automated Systems</span>
-        <h1 class="case-study-title">Online Lottery Gaming Platform (Jackpot Aruba)</h1>
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 0.8rem; display: inline-block;">iGaming &amp; Real-Time Systems</span>
+        <h1 class="case-study-title">Online Lottery &amp; Automated Draw Engine</h1>
         <p class="case-study-lead">
-          Developed a scalable online lottery gaming platform inspired by Emirates Draw, supporting Pick 3, Pick 4, and Pick 5 modes with automated draw scheduling, cryptographic verification, and distributed prize calculations.
+          An automated multi-tier lottery backend supporting Pick 3, Pick 4, and Pick 5 game formats, powered by cryptographic seed generation, distributed Redis locks, and high-speed batch prize evaluation.
         </p>
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Game Modes</div>
-            <div class="meta-val">Pick 3, Pick 4, Pick 5</div>
+            <div class="meta-label">Game Formats</div>
+            <div class="meta-val">Pick 3, Pick 4, Pick 5 &amp; Progressive Jackpots</div>
           </div>
           <div>
-            <div class="meta-label">Integrity Safeguard</div>
-            <div class="meta-val">Redis Distributed Locks (Zero Double-Draw)</div>
+            <div class="meta-label">Concurrency Guard</div>
+            <div class="meta-val">Redis Distributed Mutex (Redlock)</div>
           </div>
           <div>
             <div class="meta-label">Draw Engine</div>
@@ -93,37 +94,64 @@
           </div>
           <div>
             <div class="meta-label">Core Runtime</div>
-            <div class="meta-val">Node.js, Express, MySQL, Redis, RabbitMQ</div>
+            <div class="meta-val">Node.js, Express, MongoDB, Redis, RabbitMQ</div>
           </div>
         </div>
       </div>
     </section>
 
-    <article class="container" style="padding-top: 3.5rem;">
+    <!-- Content Article -->
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-lottery.jpg" alt="Online Lottery Platform Engine" class="case-featured-img" width="1200" height="750">
       </div>
 
       <div class="case-article">
+        <!-- Section 1 -->
         <section class="case-section">
           <h2>1. Executive Summary &amp; Platform Architecture</h2>
           <p>
-            Lottery engines require absolute audit compliance, data integrity, and strict scheduling reliability. Unlike casual games where a missed event can be retried, a delayed or duplicate lottery draw can cause legal liabilities.
+            Lottery engines require absolute audit compliance, immutable transaction history, and strict scheduling reliability. Unlike casual games where an occasional dropped packet can be retried, a delayed, missed, or duplicate lottery draw introduces legal liabilities.
           </p>
           <p>
-            I engineered the automated draw scheduling, ticket serialization, and prize distribution engines for Jackpot Aruba, enabling thousands of active ticket purchases and instantaneous draw resolution.
+            The backend orchestrates automated draw scheduling, ticket cryptographic serialization, and prize distribution engines, enabling tens of thousands of active ticket purchases and instantaneous draw resolution.
           </p>
         </section>
 
+        <!-- Section 2 -->
         <section class="case-section">
           <h2>2. The Draw Execution &amp; Ticket Validation Flow</h2>
           <ul>
-            <li><strong>Ticket Serialization</strong>: Every ticket receives a cryptographic hash upon purchase, binding the selected numbers, user wallet ID, timestamp, and target draw ID to prevent counterfeit claims.</li>
-            <li><strong>Distributed Lock Safeguard</strong>: When the scheduled draw time triggers, workers compete for a Redis distributed lock. Only the victorious worker can trigger the draw sequence, preventing split-brain double draws.</li>
+            <li><strong>Ticket Serialization &amp; Tamper-Proofing</strong>: Every ticket receives a cryptographic hash upon purchase, binding selected numbers, user wallet ID, timestamp, and target draw ID to prevent counterfeit claims.</li>
+            <li><strong>Distributed Lock Safeguard</strong>: When scheduled draw times trigger, background worker nodes compete for a Redis distributed lock. Only the single victorious worker can execute the draw sequence, preventing split-brain double draws across clustered servers.</li>
             <li><strong>Parallel Prize Evaluation</strong>: Millions of purchased combinations are evaluated against the winning draw numbers using batch bitmask operations in memory, distributing fixed and progressive jackpot tiers into player accounts within seconds.</li>
           </ul>
         </section>
 
+        <!-- Section 3 -->
+        <section class="case-section">
+          <h2>3. Full Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Core Runtime</div>
+              <div class="meta-val">Node.js (ES6+), Express.js</div>
+            </div>
+            <div>
+              <div class="meta-label">Distributed Locks</div>
+              <div class="meta-val">Redis Mutex (Redlock), IORedis</div>
+            </div>
+            <div>
+              <div class="meta-label">Databases &amp; Queues</div>
+              <div class="meta-val">MongoDB, Mongoose, RabbitMQ</div>
+            </div>
+            <div>
+              <div class="meta-label">Security &amp; Infrastructure</div>
+              <div class="meta-val">SHA-256 RNG, PM2 Cluster, Docker, Winston</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CTA -->
         <div class="case-cta-card">
           <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building Regulated Lottery or Betting Systems?</h2>
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">

@@ -73,7 +73,7 @@
           <span style="color: #ffffff;">Swisspoker Multiplayer Platform</span>
         </nav>
 
-        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; Multiplayer Systems</span>
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 0.8rem; display: inline-block;">iGaming &amp; Multiplayer Systems</span>
         <h1 class="case-study-title">Swisspoker Multiplayer Platform: Texas Hold'em &amp; MTT Architecture</h1>
         <p class="case-study-lead">
           A high-concurrency real-time poker ecosystem built with Node.js, Socket.IO, Redis, and MongoDB, featuring server-authoritative game state, dynamic multi-tier side pots, Pokersolver showdowns, MTT dynamic table rebalancing, and hierarchical rake commissions.
@@ -82,26 +82,26 @@
         <div class="case-meta-grid">
           <div>
             <div class="meta-label">Game Variants</div>
-            <div class="meta-val">Texas Hold'em &amp; Omaha</div>
+            <div class="meta-val">Texas Hold'em &amp; Omaha (Cash &amp; Tournaments)</div>
           </div>
           <div>
             <div class="meta-label">Data Architecture</div>
-            <div class="meta-val">50+ MongoDB Models &amp; Redis Caching</div>
+            <div class="meta-val">50+ MongoDB Models &amp; Redis In-Memory State</div>
           </div>
           <div>
             <div class="meta-label">Tournament Engine</div>
-            <div class="meta-val">MTT, Sit &amp; Go, Dynamic Table Balancing</div>
+            <div class="meta-val">MTT, Sit &amp; Go, Automated Table Balancing</div>
           </div>
           <div>
             <div class="meta-label">Core Runtime</div>
-            <div class="meta-val">Node.js, Express, Socket.IO, Pokersolver</div>
+            <div class="meta-val">Node.js, Express, Socket.IO, Pokersolver, PM2</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-poker.jpg" alt="Swisspoker Table and Tournament System" class="case-featured-img" width="1200" height="750">
       </div>
@@ -111,10 +111,10 @@
         <section class="case-section">
           <h2>1. Executive Summary &amp; System Scope</h2>
           <p>
-            Poker is one of the most mathematically rigorous and state-sensitive real-time applications to engineer. Unlike casual card games, poker involves high-stakes financial transactions, strict turn timers, multi-tier side pot splits across uneven all-in chip stacks, and server-authoritative security where client manipulation must be impossible.
+            Poker is one of the most state-sensitive, mathematically rigorous real-time gaming architectures. Unlike casual applications, poker demands absolute server-authoritative integrity: client devices are untrusted renderers, and all card shuffles, deals, betting limits, and pot divisions must occur strictly on the backend.
           </p>
           <p>
-            I engineered the core backend architecture for Swisspoker, encompassing over <strong>50 database models</strong> spanning users, wallets, chip accounting, table states, tournament schedules, blind progressions, clubs, agent hierarchies, and audit logging.
+            The backend manages over <strong>50 distinct database models</strong> encompassing player wallets, chips, financial transactions, live tables, tournaments, blind structures, club affiliations, agent revenue trees, and compliance audits.
           </p>
         </section>
 
@@ -126,10 +126,10 @@
           </p>
           <ul>
             <li>
-              <strong>Texas Hold'em</strong>: 2 private hole cards dealt to each player, followed by 5 community board cards (Flop, Turn, River). Players create the best possible 5-card combination from any mix of hole and board cards.
+              <strong>Texas Hold'em</strong>: 2 private hole cards dealt per player, followed by 5 community board cards (Flop, Turn, River). Players form the highest ranking 5-card combination from any mix of hole and board cards.
             </li>
             <li>
-              <strong>Omaha</strong>: 4 private hole cards dealt to each player. Crucially, players <em>must use exactly 2 hole cards and exactly 3 community board cards</em> to form their final hand.
+              <strong>Omaha</strong>: 4 private hole cards dealt per player. Crucially, players <em>must use exactly 2 hole cards and exactly 3 community board cards</em> to form their final hand.
             </li>
           </ul>
           <p>
@@ -142,26 +142,26 @@
           <h2>3. Cash Game Hand Lifecycle &amp; State Machine</h2>
           
           <div class="code-preview-box">
-<span class="code-comment"># Cash Game Table State Machine</span>
-1. [Seat Reservation &amp; Buy-In]
+<span class="code-comment"># Cash Game Table State Machine Topology</span>
+[Phase 1: Table Matchmaking &amp; Buy-In]
    ├── Balance Validation → Deduct Wallet → Credit Table Stack
    └── Seat Assignment &amp; Player Broadcast
          │
-2. [Hand Initialization]
+[Phase 2: Hand Initialization]
    ├── Rotate Dealer Button, Small Blind (SB), Big Blind (BB)
    └── Collect Forced Blind Bets → Initialize Main Pot
          │
-3. [Card Dealing]
-   ├── Server-Side Cryptographic Deck Shuffle
-   └── Deliver Private Hole Cards (Socket Event strictly to owning socket)
+[Phase 3: Cryptographic Card Dealing]
+   ├── Server-Side Cryptographic Deck Shuffle (Fortuna PRNG)
+   └── Deliver Private Hole Cards (Strictly to owning socket connection)
          │
-4. [Betting Rounds: Pre-Flop ➔ Flop ➔ Turn ➔ River]
+[Phase 4: Sequential Betting Rounds (Pre-Flop ➔ Flop ➔ Turn ➔ River)]
    ├── 30-Second Turn Countdown (Server Authoritative)
    ├── Validate Action: Fold | Check | Call | Raise | All-In
    ├── Update Pot &amp; Check Stack Bounds
    └── If everyone folds ➔ Award pot immediately; Else reveal next board card
          │
-5. [Showdown &amp; Pot Distribution]
+[Phase 5: Showdown &amp; Pot Distribution]
    ├── Pokersolver Hand Evaluation
    ├── Resolve Multi-Tier Side Pots
    ├── Deduct Rake Commission (with Cap)
@@ -211,6 +211,37 @@
             <li><strong>Dynamic Rake Percentages &amp; Caps</strong>: Deducts a configurable percentage (typically 3%–5%) from cash pots, subject to a maximum cap per hand. "No Flop, No Drop" policy enforced.</li>
             <li><strong>Agent Commission Trees (MLM)</strong>: Commissions flow automatically through multi-level hierarchies: <code>Master Agent ➔ Super Agent ➔ Sub-Agent ➔ Player</code>. Each tier receives automated real-time rake rebates credited to their operational wallets.</li>
           </ul>
+        </section>
+
+        <!-- Section 7 -->
+        <section class="case-section">
+          <h2>7. Complete Engineering Stack &amp; Dependencies</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Core Runtime</div>
+              <div class="meta-val">Node.js (ES6+), Express.js</div>
+            </div>
+            <div>
+              <div class="meta-label">Real-Time Engine</div>
+              <div class="meta-val">Socket.IO, WebSockets, Events</div>
+            </div>
+            <div>
+              <div class="meta-label">Poker Logic &amp; RNG</div>
+              <div class="meta-val">Pokersolver, Javascript-Fortuna PRNG</div>
+            </div>
+            <div>
+              <div class="meta-label">Databases &amp; Models</div>
+              <div class="meta-val">MongoDB (50+ Schemas), Mongoose, Redis</div>
+            </div>
+            <div>
+              <div class="meta-label">Payments &amp; IAP</div>
+              <div class="meta-val">CoinPayments (Crypto), Apple &amp; Google IAP</div>
+            </div>
+            <div>
+              <div class="meta-label">Auth &amp; Notifications</div>
+              <div class="meta-val">Passport.js, JWT, Firebase Cloud Messaging (FCM)</div>
+            </div>
+          </div>
         </section>
 
         <!-- CTA -->

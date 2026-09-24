@@ -73,7 +73,7 @@
           <span style="color: #ffffff;">Spillorama Bingo Infrastructure</span>
         </nav>
 
-        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; Real-Time Systems</span>
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 0.8rem; display: inline-block;">iGaming &amp; Real-Time Systems</span>
         <h1 class="case-study-title">Spillorama Multi-Game Bingo Infrastructure (Norway)</h1>
         <p class="case-study-lead">
           Designed and built the hybrid distributed gaming backend synchronizing 40+ physical bingo halls in Norway with thousands of concurrent online players, achieving sub-100ms state consistency between overhead TV hall displays and player touchscreens.
@@ -85,23 +85,23 @@
             <div class="meta-val">AIS Technolabs / Spillorama (Norway)</div>
           </div>
           <div>
-            <div class="meta-label">Scale</div>
-            <div class="meta-val">40+ Physical Halls &amp; Online Players</div>
+            <div class="meta-label">Scale &amp; Venues</div>
+            <div class="meta-val">40+ Physical Halls &amp; Nationwide Mobile Players</div>
           </div>
           <div>
-            <div class="meta-label">Latency SLA</div>
-            <div class="meta-val">&lt; 100ms Broadcast Sync</div>
+            <div class="meta-label">Synchronization SLA</div>
+            <div class="meta-val">&lt; 100ms Broadcast Sync (TV &amp; Touchscreens)</div>
           </div>
           <div>
-            <div class="meta-label">Tech Stack</div>
-            <div class="meta-val">Node.js, Socket.IO, Redis, BullMQ, Mongo</div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js, Express, Socket.IO, BullMQ, Redlock</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-bingo.jpg" alt="Spillorama Norway TV Screen and Mobile Sync" class="case-featured-img" width="1200" height="750">
       </div>
@@ -111,15 +111,15 @@
         <section class="case-section">
           <h2>1. Project Overview &amp; Challenge</h2>
           <p>
-            In Norway, Bingo is a widely popular social entertainment pastime with dozens of licensed physical halls operating simultaneously. Spillorama needed to modernize their legacy terminal infrastructure by unifying <strong>40+ physical bingo venues with modern web and mobile players into one synchronized national game network</strong>.
+            In Norway, Bingo is a widely popular social entertainment pastime with dozens of licensed physical halls operating simultaneously. Spillorama modernized this infrastructure by unifying <strong>40+ physical bingo venues with web and mobile players into one synchronized national network</strong>.
           </p>
           <p>
             The core engineering challenge was <strong>strict real-time clock and state synchronization</strong>:
           </p>
           <ul>
-            <li>When a bingo ball is drawn by the server, players watching the large overhead TV screens in Oslo or Bergen had to see the ball at the exact same millisecond as players dabbing cards on their mobile devices at home.</li>
+            <li>When a bingo ball is drawn by the server, players watching the large overhead TV screens in Oslo or Bergen must see the ball at the exact same millisecond as players dabbing cards on their mobile devices at home.</li>
             <li>Any clock drift, out-of-order event delivery, or delayed draw packet would compromise game fairness and violate Norwegian gaming regulations.</li>
-            <li>The system had to support five completely distinct game modes running round-the-clock with automated scheduling and zero server restarts.</li>
+            <li>The system powers five completely distinct game modes running round-the-clock with automated scheduling and zero server restarts.</li>
           </ul>
         </section>
 
@@ -127,7 +127,7 @@
         <section class="case-section">
           <h2>2. The Five Synchronized Game Engines</h2>
           <p>
-            I engineered the state machines and rule evaluation logic for five custom game variants:
+            The platform encapsulates five custom game variants:
           </p>
           <ul>
             <li><strong>Papir Bingo (Hybrid 75-Ball)</strong>: Synchronizes traditional paper cards sold in physical halls with digital tickets, tracking multi-tier line wins (1-line, 2-line, Full House).</li>
@@ -152,7 +152,7 @@
               └──────────────────┬───────────────────┘
                                  │ WSS (Encrypted WebSockets)
                                  ▼
-                    [AWS ALB / HAProxy Load Balancer]
+                    [Nginx Load Balancer with Sticky Routing]
                                  │
          ┌───────────────────────┼───────────────────────┐
          ▼                       ▼                       ▼
@@ -165,13 +165,13 @@
                                  │
              ┌───────────────────┴───────────────────┐
              ▼                                       ▼
-  <strong>[Distributed Redlock Lock]</strong>              <strong>[BullMQ Job Queues &amp; ZSET]</strong>
+  <strong>[Distributed Redlock Mutex]</strong>             <strong>[BullMQ Job Queues &amp; ZSET]</strong>
   (SETNX / Lua Atomic Guard)             (Sub-second Ball Draw Timing)
              │                                       │
              └───────────────────┬───────────────────┘
                                  │
                                  ▼
-                     [High-Write MongoDB Replica]
+                     [MongoDB &amp; MSSQL Data Tier]
                      (bulkWrite Batch Ticket Validation)
                                  │
                                  ▼
@@ -189,7 +189,7 @@
               <div class="workflow-step-num">1</div>
               <h3 class="workflow-step-title">Eliminating In-Memory Timers (setTimeout / setInterval)</h3>
               <p>
-                In a multi-node cluster, using native <code>setInterval</code> for ball draws causes clock drift and duplicate ball draws if multiple servers trigger ticks. I replaced all internal timers with <strong>Redis Sorted Sets (ZSET) and BullMQ delayed job queues</strong>. The draw clock is centralized in Redis, ensuring atomic, monotonic ball draws.
+                In a multi-node cluster, using native <code>setInterval</code> for ball draws causes clock drift and duplicate ball draws if multiple servers trigger ticks. All internal timers were replaced with <strong>Redis Sorted Sets (ZSET) and BullMQ delayed job queues</strong>. The draw clock is centralized in Redis, ensuring atomic, monotonic ball draws.
               </p>
             </div>
 
@@ -213,7 +213,7 @@
               <div class="workflow-step-num">4</div>
               <h3 class="workflow-step-title">High-Write Ticket Validation via bulkWrite</h3>
               <p>
-                With tens of thousands of active tickets per round, evaluating every card sequentially in MongoDB would cause disk I/O starvation. I implemented in-memory card bitmask evaluation on Node.js workers and flushed prize winners in batches using MongoDB <code>bulkWrite</code> with compound index lookups.
+                With tens of thousands of active tickets per round, evaluating every card sequentially in MongoDB would cause disk I/O starvation. In-memory card bitmask evaluation was implemented on Node.js workers and flushed prize winners in batches using MongoDB <code>bulkWrite</code> with compound index lookups.
               </p>
             </div>
           </div>
@@ -221,47 +221,42 @@
 
         <!-- Section 5 -->
         <section class="case-section">
-          <h2>5. Production Impact &amp; Results</h2>
-          <table class="benchmark-table">
-            <thead>
-              <tr>
-                <th>System Metric</th>
-                <th>Target Requirement</th>
-                <th>Production Result</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Physical Venues Connected</strong></td>
-                <td>30+ Halls</td>
-                <td><strong>40+ Venues Active Across Norway</strong></td>
-              </tr>
-              <tr>
-                <td><strong>TV vs. Mobile Display Drift</strong></td>
-                <td>&lt; 250ms</td>
-                <td><strong>&lt; 100ms Synchronized Latency</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Duplicate Draw Rate</strong></td>
-                <td>0.00% Tolerated</td>
-                <td><strong>0 Incidents (Guaranteed by Redlock)</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Platform Availability</strong></td>
-                <td>99.5%</td>
-                <td><strong>99.9% Uptime with Zero-Downtime Rollouts</strong></td>
-              </tr>
-            </tbody>
-          </table>
+          <h2>5. Comprehensive Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Core Runtime</div>
+              <div class="meta-val">Node.js (ES6+), Express.js</div>
+            </div>
+            <div>
+              <div class="meta-label">Real-Time Sockets</div>
+              <div class="meta-val">Socket.IO, @socket.io/redis-adapter, @socket.io/redis-emitter</div>
+            </div>
+            <div>
+              <div class="meta-label">Queues &amp; Distributed Locks</div>
+              <div class="meta-val">BullMQ, Redlock (Beta), IORedis, p-limit</div>
+            </div>
+            <div>
+              <div class="meta-label">Databases &amp; Storage</div>
+              <div class="meta-val">MongoDB (Mongoose), MSSQL (SQL Server)</div>
+            </div>
+            <div>
+              <div class="meta-label">Fairness &amp; Streams</div>
+              <div class="meta-val">Javascript-Fortuna PRNG, Fast-CSV, ExcelJS</div>
+            </div>
+            <div>
+              <div class="meta-label">Infrastructure &amp; Security</div>
+              <div class="meta-val">Nginx Sticky Sessions, PM2 Cluster, Docker, Helmet, Joi</div>
+            </div>
+          </div>
         </section>
 
         <!-- CTA -->
         <div class="case-cta-card">
-          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building High-Concurrency Gaming Backends?</h2>
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building Distributed Multiplayer Systems?</h2>
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
-            Whether you're developing multiplayer gaming systems, WebSocket broadcasting clusters, or distributed ticket engines, let's architect a high-scale solution.
+            Whether you need sub-100ms multi-screen synchronization, distributed locks, or high-write ticket validation engines, let's architect a scalable solution.
           </p>
-          <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Design with Chetan</a>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Architecture with Chetan</a>
         </div>
       </div>
     </article>

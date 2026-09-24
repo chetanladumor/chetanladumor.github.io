@@ -73,35 +73,35 @@
           <span style="color: #ffffff;">E-Commerce Microservices</span>
         </nav>
 
-        <span class="project-badge-tag tag-microservices" style="margin-bottom: 1rem; display: inline-block;">Enterprise &amp; Microservices</span>
+        <span class="project-badge-tag tag-microservices" style="margin-bottom: 0.8rem; display: inline-block;">Enterprise &amp; Microservices</span>
         <h1 class="case-study-title">Enterprise E-Commerce Microservices Suite</h1>
         <p class="case-study-lead">
-          Engineered an event-driven architecture decomposing monolithic e-commerce flows into dedicated microservices, synchronizing asynchronous events via Apache Kafka and RabbitMQ to slash checkout latency by 42% during peak sales events.
+          Decomposed monolithic e-commerce flows into dedicated asynchronous microservices, orchestrating transactions via Apache Kafka and RabbitMQ to slash checkout latency by 42% while eliminating database deadlocks during flash sales.
         </p>
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Latency Impact</div>
-            <div class="meta-val">42% Latency Reduction at Checkout</div>
+            <div class="meta-label">Latency SLA</div>
+            <div class="meta-val">42% Latency Cut (180ms Turnaround)</div>
           </div>
           <div>
-            <div class="meta-label">Event Brokers</div>
-            <div class="meta-val">Apache Kafka &amp; RabbitMQ Queues</div>
+            <div class="meta-label">Event Infrastructure</div>
+            <div class="meta-val">Apache Kafka Topics &amp; RabbitMQ Queues</div>
           </div>
           <div>
             <div class="meta-label">Database Optimization</div>
-            <div class="meta-val">PostgreSQL + PgBouncer Pooling</div>
+            <div class="meta-val">PostgreSQL 16 + PgBouncer Pooling</div>
           </div>
           <div>
             <div class="meta-label">Core Runtime</div>
-            <div class="meta-val">Node.js, Express, Docker, WebSockets</div>
+            <div class="meta-val">TypeScript, Node.js, Express, Docker Compose</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-ecommerce.jpg" alt="E-Commerce Microservices Event Flow" class="case-featured-img" width="1200" height="750">
       </div>
@@ -128,7 +128,7 @@
         <section class="case-section">
           <h2>2. The Event-Driven Decoupled Architecture</h2>
           <p>
-            I redesigned this flow into an <strong>asynchronous event-driven microservices topology</strong> orchestrated via Apache Kafka topics and RabbitMQ queues:
+            This flow was redesigned into an <strong>asynchronous event-driven microservices topology</strong> orchestrated via Apache Kafka topics and RabbitMQ queues:
           </p>
 
           <div class="code-preview-box">
@@ -198,21 +198,44 @@
                 <td><strong>Graceful asynchronous retry via DLQ</strong></td>
               </tr>
               <tr>
-                <td><strong>Order Status Visibility</strong></td>
-                <td>Manual page refresh required</td>
-                <td><strong>Live push updates via WebSockets</strong></td>
+                <td><strong>Peak Throughput Capacity</strong></td>
+                <td>~350 Orders / Min</td>
+                <td><strong>3,200+ Orders / Min Sustained</strong></td>
               </tr>
             </tbody>
           </table>
         </section>
 
+        <!-- Section 5 -->
+        <section class="case-section">
+          <h2>5. Comprehensive Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Languages &amp; Core</div>
+              <div class="meta-val">TypeScript, Node.js, Express.js, React.js</div>
+            </div>
+            <div>
+              <div class="meta-label">Message Brokers</div>
+              <div class="meta-val">Apache Kafka, RabbitMQ (DLQ queues)</div>
+            </div>
+            <div>
+              <div class="meta-label">Databases &amp; Pooling</div>
+              <div class="meta-val">PostgreSQL 16, PgBouncer, Redis Cluster</div>
+            </div>
+            <div>
+              <div class="meta-label">Infrastructure &amp; Payment</div>
+              <div class="meta-val">Docker Compose, Stripe API, Socket.IO</div>
+            </div>
+          </div>
+        </section>
+
         <!-- CTA -->
         <div class="case-cta-card">
-          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Scaling High-Volume E-Commerce or Microservices?</h2>
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Scaling E-Commerce or Microservices?</h2>
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
-            From message queue decoupling to connection pooling and zero-downtime microservices architectures, let's connect.
+            Whether you need event-driven architectures with Kafka, connection pool tuning with PgBouncer, or high-throughput checkout workflows, let's connect.
           </p>
-          <a href="../index.html#contact" class="btn btn-primary btn-lg">Contact Chetan Ladumor</a>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Design with Chetan</a>
         </div>
       </div>
     </article>

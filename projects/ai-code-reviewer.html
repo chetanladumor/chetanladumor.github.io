@@ -73,7 +73,7 @@
           <span style="color: #ffffff;">AI Code Reviewer</span>
         </nav>
 
-        <span class="project-badge-tag tag-ai" style="margin-bottom: 1rem; display: inline-block;">Agentic AI &amp; LangGraph</span>
+        <span class="project-badge-tag tag-ai" style="margin-bottom: 0.8rem; display: inline-block;">Agentic AI &amp; LangGraph</span>
         <h1 class="case-study-title">AI-Based GitHub PR &amp; Commit Review Automation</h1>
         <p class="case-study-lead">
           An event-driven, multi-agent code analysis platform that intercepts GitHub pull requests, executes 5 specialized LLM agents in parallel across a state graph, and synthesizes structured, explainable review comments directly onto code diffs.
@@ -81,27 +81,27 @@
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Role</div>
-            <div class="meta-val">Lead AI Systems Architect</div>
-          </div>
-          <div>
             <div class="meta-label">Core Runtime</div>
-            <div class="meta-val">Node.js (TypeScript) &amp; Express</div>
+            <div class="meta-val">TypeScript, Node.js, Express.js</div>
           </div>
           <div>
             <div class="meta-label">AI Orchestration</div>
-            <div class="meta-val">LangGraph &amp; LangChain (OpenRouter)</div>
+            <div class="meta-val">LangGraph (StateGraph), LangChain Core</div>
           </div>
           <div>
-            <div class="meta-label">Queue &amp; Storage</div>
-            <div class="meta-val">BullMQ, Redis, MongoDB</div>
+            <div class="meta-label">Queue &amp; Cache</div>
+            <div class="meta-val">BullMQ, Redis Cluster, @socket.io/redis-adapter</div>
+          </div>
+          <div>
+            <div class="meta-label">APIs &amp; Validation</div>
+            <div class="meta-val">GitHub App Octokit, OpenRouter, Zod</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-ai-code-review.jpg" alt="AI Code Reviewer Architecture Diagram" class="case-featured-img" width="1200" height="750">
       </div>
@@ -109,15 +109,12 @@
       <div class="case-article">
         <!-- Section 1 -->
         <section class="case-section">
-          <h2>1. Executive Summary &amp; The Problem</h2>
+          <h2>1. Executive Summary &amp; Architectural Motivation</h2>
           <p>
-            In modern engineering teams, peer pull request (PR) reviews are notorious bottlenecks. Senior developers spend hours identifying recurring security oversights, memory leaks, missed indexing, or SOLID violations.
+            In modern engineering teams, peer pull request (PR) reviews are notorious bottlenecks. Monolithic LLM prompts typically suffer from context dilution, overlooking subtle edge-case concurrency bugs, memory leaks, unindexed queries, or OWASP Top 10 vulnerabilities.
           </p>
           <p>
-            A naive approach is to dump an entire git diff into a single monolithic LLM prompt: <em>"Review this code for bugs, security, and style."</em> In practice, LLMs experience "context dilution" and laziness with monolithic prompts—overlooking subtle re-entrancy issues, SQL injections, or unindexed database queries.
-          </p>
-          <p>
-            I architected this platform to treat code review as a <strong>cooperative multi-agent engineering workflow</strong>. By splitting the review task into five independent domain-specific agents (Security, Quality, Performance, Architecture, and DevOps) orchestrated via <strong>LangGraph</strong>, the system delivers thorough, reproducible, and granular feedback on every pull request.
+            This platform treats code analysis as a <strong>distributed cooperative multi-agent workflow</strong>. By splitting the review task into five independent domain-specific agents (Security, Quality, Performance, Architecture, and DevOps) orchestrated via <strong>LangGraph</strong>, the system delivers structured, reproducible, and explainable feedback directly onto code diffs.
           </p>
         </section>
 
@@ -125,7 +122,7 @@
         <section class="case-section">
           <h2>2. End-to-End System Architecture</h2>
           <p>
-            Because LLM inference takes 8–20 seconds per agent, GitHub webhook requests must never block on AI processing, otherwise GitHub times out after 10 seconds. The ingestion pipeline is strictly decoupled using <strong>BullMQ and Redis</strong>:
+            Because LLM inference across five agents requires 8–20 seconds of compute time, GitHub webhook requests must never block synchronously on AI execution. The ingestion pipeline is decoupled using <strong>BullMQ and Redis</strong>:
           </p>
 
           <div class="code-preview-box">
@@ -150,19 +147,19 @@
    │
    ├── Initial State: { diff, repo, prNumber, findings: [] }
    │
-   ├── <strong>PARALLEL AGENT EXECUTION (Promise.all / Graph Branches):</strong>
+   ├── <strong>PARALLEL AGENT EXECUTION (Concurrently Branched):</strong>
    │   ├── 🛡️ <strong>Security Agent</strong>: Secret leaks, OWASP Top 10, sanitization
    │   ├── ⚡ <strong>Performance Agent</strong>: N+1 queries, memory leaks, event loop blocks
    │   ├── 📐 <strong>Architecture Agent</strong>: Coupling, SOLID principles, layer leakage
    │   ├── 💎 <strong>Quality Agent</strong>: Code smells, edge cases, type safety
    │   └── 🐳 <strong>DevOps Agent</strong>: Dockerfile lint, CI/CD impact, env drift
    │
-   ├── <strong>State Reducer Channel:</strong> (prev, next) => [...prev, ...next]
+   ├── <strong>State Reducer Channel:</strong> Merges findings atomically into shared state
    │
    ▼
-<strong>[Tech Lead Aggregator Node]</strong>
+<strong>[Consensus &amp; Synthesis Aggregator Node]</strong>
    ├── Deduplicate redundant suggestions across agents
-   ├── Filter findings below 75% confidence score
+   ├── Filter findings below 75% confidence threshold
    └── Synthesize markdown report with collapsible file diff tables
    │
    ▼
@@ -177,7 +174,7 @@
         <section class="case-section">
           <h2>3. Why LangChain + LangGraph?</h2>
           <p>
-            Understanding the distinction between LangChain and LangGraph is crucial:
+            Understanding the distinction between LangChain and LangGraph is fundamental to enterprise agentic systems:
           </p>
           <ul>
             <li>
@@ -189,9 +186,9 @@
           </ul>
 
           <div class="callout-box">
-            <div class="callout-title">💡 The Reducer Pattern in Action</div>
+            <div class="callout-title">💡 The State Reducer Pattern</div>
             <p style="margin: 0; color: var(--text-secondary);">
-              Instead of agents overwriting state, LangGraph defines a <code>findings</code> channel with a reducer: <code>(prev, next) =&gt; [...prev, ...next]</code>. When Security finishes, it appends its vulnerabilities. When Performance finishes 2 seconds later, it appends its latency findings. The graph guarantees thread-safe, non-destructive state accumulation.
+              Instead of agents clobbering shared memory, LangGraph defines a <code>findings</code> channel backed by a state reducer function. When Security completes analysis, it appends its vulnerabilities. When Performance finishes 2 seconds later, it appends its latency findings. The graph guarantees thread-safe, non-destructive state accumulation across parallel workers.
             </p>
           </div>
         </section>
@@ -205,7 +202,7 @@
               <div class="workflow-step-num">1</div>
               <h3 class="workflow-step-title">Webhook Security &amp; Idempotency</h3>
               <p>
-                Guarded against malicious payloads by calculating HMAC SHA-256 signatures against the GitHub App secret. Stored GitHub's <code>X-GitHub-Delivery</code> GUID in MongoDB with a unique index to guarantee that duplicate webhook retries are immediately discarded.
+                Guarded against spoofed payloads by verifying HMAC SHA-256 signatures against the GitHub App secret. Stored GitHub's <code>X-GitHub-Delivery</code> GUID in MongoDB with a unique index to guarantee that duplicate webhook retries are discarded instantly.
               </p>
             </div>
 
@@ -213,23 +210,46 @@
               <div class="workflow-step-num">2</div>
               <h3 class="workflow-step-title">Structured Output Validation with Zod</h3>
               <p>
-                Unstructured LLM text is difficult to programmatically post onto specific PR lines. We forced all 5 agents to return strict Zod schemas defining <code>file</code>, <code>lineNumber</code>, <code>severity</code> (HIGH/MEDIUM/LOW), <code>message</code>, and <code>confidenceScore</code>. If an LLM response fails validation, LangChain retries with automated error feedback.
+                Unstructured LLM text cannot be reliably mapped to code diff lines. All agents return strict Zod schemas defining <code>file</code>, <code>lineNumber</code>, <code>severity</code>, <code>message</code>, and <code>confidenceScore</code>. If validation fails, automated error-correction loops re-query the model.
               </p>
             </div>
 
             <div class="workflow-step-card">
               <div class="workflow-step-num">3</div>
-              <h3 class="workflow-step-title">Multi-Model Routing via OpenRouter</h3>
+              <h3 class="workflow-step-title">Dynamic Multi-Model Routing via OpenRouter</h3>
               <p>
-                Security and Architecture analysis benefit from deep reasoning models (Claude 3.5 Sonnet / GPT-4o), whereas Quality and DevOps checks run efficiently on faster, lightweight models. OpenRouter provided dynamic routing with automatic rate-limit failovers.
+                Security and Architecture analysis benefit from deep reasoning models (Claude 3.5 Sonnet / GPT-4o), whereas Quality and DevOps checks run efficiently on faster, lightweight models. OpenRouter provides dynamic routing with automated rate-limit failovers.
               </p>
             </div>
           </div>
         </section>
 
-        <!-- Benchmark / Results -->
+        <!-- Section 5 -->
         <section class="case-section">
-          <h2>5. Production Impact &amp; Metrics</h2>
+          <h2>5. Full Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Languages &amp; Runtimes</div>
+              <div class="meta-val">TypeScript, Node.js (v20+), Express.js</div>
+            </div>
+            <div>
+              <div class="meta-label">AI Frameworks</div>
+              <div class="meta-val">@langchain/langgraph, @langchain/core, @langchain/openai</div>
+            </div>
+            <div>
+              <div class="meta-label">Queue &amp; Storage</div>
+              <div class="meta-val">BullMQ, Redis, MongoDB, Mongoose</div>
+            </div>
+            <div>
+              <div class="meta-label">Integrations &amp; Tooling</div>
+              <div class="meta-val">@octokit/webhooks, @octokit/rest, Socket.IO, Zod, PM2, Helmet</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Metrics -->
+        <section class="case-section">
+          <h2>6. Production Impact &amp; Metrics</h2>
           <table class="benchmark-table">
             <thead>
               <tr>
@@ -250,14 +270,9 @@
                 <td><strong>100% Automated Scanning</strong></td>
               </tr>
               <tr>
-                <td><strong>Webhook Response Time</strong></td>
-                <td>N/A</td>
-                <td><strong>&lt; 40ms (HTTP 202 via BullMQ)</strong></td>
-              </tr>
-              <tr>
-                <td><strong>False Positive Filter</strong></td>
-                <td>N/A</td>
-                <td><strong>Aggregator filters out &lt;75% confidence</strong></td>
+                <td><strong>Developer Wait Time</strong></td>
+                <td>High Context-Switching Overhead</td>
+                <td><strong>Immediate Real-Time Feedback</strong></td>
               </tr>
             </tbody>
           </table>
@@ -265,11 +280,11 @@
 
         <!-- CTA -->
         <div class="case-cta-card">
-          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Interested in Agentic AI Architecture?</h2>
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.8rem;">Building Agentic AI Systems?</h2>
           <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
-            Whether you need LangGraph multi-agent workflows, RAG pipelines, or high-throughput queue processing in Node.js—let's connect.
+            Whether you need multi-agent graph workflows, LLM orchestration, or event-driven BullMQ worker pipelines, let's connect.
           </p>
-          <a href="../index.html#contact" class="btn btn-primary btn-lg">Get in Touch with Chetan</a>
+          <a href="../index.html#contact" class="btn btn-primary btn-lg">Discuss System Design with Chetan</a>
         </div>
       </div>
     </article>

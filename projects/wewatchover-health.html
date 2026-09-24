@@ -73,7 +73,7 @@
           <span style="color: #ffffff;">WeWatchOver Health System</span>
         </nav>
 
-        <span class="project-badge-tag tag-health" style="margin-bottom: 1rem; display: inline-block;">HealthTech &amp; IoT Streaming</span>
+        <span class="project-badge-tag tag-health" style="margin-bottom: 0.8rem; display: inline-block;">HealthTech &amp; IoT Streaming</span>
         <h1 class="case-study-title">WeWatchOver – Wearable Biometric Monitoring &amp; Alerting</h1>
         <p class="case-study-lead">
           A high-reliability production IoT backend processing continuous real-time biometric streams (Heart Rate, SpO2, Body Temp, GPS) from Fitbit, Oura Ring, and E88 smartwatches, paired with rule-based automated Twilio SMS emergency alerts.
@@ -81,27 +81,27 @@
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Sensors Ingested</div>
-            <div class="meta-val">Fitbit, Oura Ring, E88 Wearables</div>
+            <div class="meta-label">Wearable Integrations</div>
+            <div class="meta-val">Fitbit SDK, Oura Ring API, E88 Wearables</div>
           </div>
           <div>
-            <div class="meta-label">Alert Dispatch Latency</div>
-            <div class="meta-val">&lt; 2s via Twilio Emergency SMS</div>
+            <div class="meta-label">Alert SLA</div>
+            <div class="meta-val">&lt; 2s via Twilio Emergency SMS &amp; MMS</div>
           </div>
           <div>
             <div class="meta-label">Live Clinical UI</div>
-            <div class="meta-val">Persistent Socket.IO Dashboards</div>
+            <div class="meta-val">Bi-Directional Socket.IO Dashboards</div>
           </div>
           <div>
             <div class="meta-label">Core Runtime</div>
-            <div class="meta-val">Node.js, Express, MongoDB, Redis</div>
+            <div class="meta-val">Node.js, Express, MongoDB, Redis, PM2</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-health-wewatchover.jpg" alt="WeWatchOver Health Dashboard and Alert Engine" class="case-featured-img" width="1200" height="750">
       </div>
@@ -111,10 +111,10 @@
         <section class="case-section">
           <h2>1. Executive Summary &amp; Patient Safety Scope</h2>
           <p>
-            The WeWatchOver (GuardMe) platform provides continuous health and safety monitoring for elderly and high-risk patients. Connected smartwatches and wearable rings stream medical telemetry 24/7. When dangerous anomalies occur (such as a sudden cardiac spike, oxygen desaturation, or a sudden fall), the backend triggers automated emergency protocols.
+            The WeWatchOver (GuardMe) platform provides continuous health and safety monitoring for elderly, post-operative, and high-risk patients. Connected smartwatches and wearable rings stream medical telemetry 24/7. When dangerous anomalies occur (such as sudden cardiac tachyarrhythmia, oxygen desaturation, or sudden falls), the backend triggers automated emergency protocols.
           </p>
           <p>
-            My role was to manage, optimize, and maintain this production backend: ensuring zero telemetry data loss, supporting iOS and Android mobile engineering teams, and optimizing the threshold rules engine.
+            The core architecture guarantees zero telemetry data loss, high-frequency timeseries deduplication, and resilient integration with native iOS and Android companion apps.
           </p>
         </section>
 
@@ -126,20 +126,21 @@
 <span class="code-comment"># WeWatchOver Real-Time Biometric Pipeline</span>
 [Patient Smartwatch (Fitbit / Oura / E88)]
    │
-   ├── Bluetooth Sync ➔ Patient Mobile App (iOS / Android)
+   ├── Bluetooth Low Energy (BLE) Sync ➔ Patient Mobile App (iOS / Android)
    │
    ▼ HTTPS / WSS Streaming Ingestion
 [Node.js Ingestion Service]
    │
    ├── Parse Telemetry: { heartRate, spO2, temp, gpsCoordinates, battery }
-   ├── Deduplicate &amp; Persist Timeseries Entry in MongoDB
+   ├── In-Memory Deduplication &amp; Timeseries Buffering in Redis
+   └── Async Batch Write to MongoDB Timeseries Collections
    │
    ▼
 [Rule-Based Anomaly Detection Engine]
    │
-   ├── Check Threshold 1: Heart Rate &gt; 130 BPM or &lt; 45 BPM?
-   ├── Check Threshold 2: Blood Oxygen (SpO2) &lt; 90%?
-   ├── Check Threshold 3: Sudden Fall / Accelerometer Shock?
+   ├── Check Threshold 1: Heart Rate &gt; 130 BPM or &lt; 45 BPM (Cardiac Anomaly)
+   ├── Check Threshold 2: Blood Oxygen (SpO2) &lt; 90% (Hypoxemia Alert)
+   ├── Check Threshold 3: Sudden Fall / Accelerometer Shock Vector
    │
    ├── <strong>IF NORMAL</strong> ➔ Stream live vitals to Doctor Dashboard via Socket.IO
    │
@@ -160,7 +161,7 @@
               <div class="workflow-step-num">1</div>
               <h3 class="workflow-step-title">High-Frequency Timeseries Ingestion</h3>
               <p>
-                Wearable sensors send heart-rate readings every few seconds. To prevent database I/O saturation, telemetry writes were buffered in Redis memory queues and flushed to MongoDB in micro-batches with TTL indexes for automated archiving.
+                Wearable sensors stream heart-rate readings continuously. To prevent database I/O saturation, telemetry writes are buffered in Redis memory queues and flushed to MongoDB using bulk writes with TTL indexes for automated archiving.
               </p>
             </div>
 
@@ -168,16 +169,39 @@
               <div class="workflow-step-num">2</div>
               <h3 class="workflow-step-title">Sub-2-Second Emergency Notification</h3>
               <p>
-                In medical emergencies, every second matters. The threshold evaluation algorithm runs synchronously in memory upon packet arrival. If thresholds breach, the Twilio REST API request executes with priority concurrency, delivering emergency SMS alerts within 2 seconds of detection.
+                In critical medical incidents, latency is vital. The threshold evaluation runs in memory upon packet ingestion. If thresholds breach, the Twilio REST API request executes with priority concurrency, delivering emergency SMS alerts within 2 seconds of detection.
               </p>
             </div>
 
             <div class="workflow-step-card">
               <div class="workflow-step-num">3</div>
-              <h3 class="workflow-step-title">Mobile Team Collaboration</h3>
+              <h3 class="workflow-step-title">Mobile Reconnect &amp; Offline Sync</h3>
               <p>
-                Supported native Android and iOS mobile developers by designing resilient reconnect protocols, offline data caching sync for when patients temporarily lose cellular coverage, and lightweight JSON payloads.
+                Collaborated with iOS and Android teams to establish resilient reconnect protocols, enabling companion apps to cache telemetry locally during transient cellular dead-zones and flush back-dated readings upon reconnect without data corruption.
               </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section class="case-section">
+          <h2>4. Full Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Core Runtime</div>
+              <div class="meta-val">Node.js, Express.js, RESTful Microservices</div>
+            </div>
+            <div>
+              <div class="meta-label">Real-Time Networking</div>
+              <div class="meta-val">Socket.IO, WebSockets, Redis Adapter</div>
+            </div>
+            <div>
+              <div class="meta-label">Integrations &amp; Telemetry</div>
+              <div class="meta-val">Twilio REST API, Fitbit Web API, Oura Ring API</div>
+            </div>
+            <div>
+              <div class="meta-label">Data &amp; Operations</div>
+              <div class="meta-val">MongoDB, Redis, PM2 Cluster, Docker, Winston</div>
             </div>
           </div>
         </section>

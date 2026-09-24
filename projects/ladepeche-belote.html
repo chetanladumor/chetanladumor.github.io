@@ -73,35 +73,35 @@
           <span style="color: #ffffff;">Ladepeche Belote Card Game</span>
         </nav>
 
-        <span class="project-badge-tag tag-gaming" style="margin-bottom: 1rem; display: inline-block;">iGaming &amp; Multiplayer Systems</span>
+        <span class="project-badge-tag tag-gaming" style="margin-bottom: 0.8rem; display: inline-block;">iGaming &amp; Multiplayer Systems</span>
         <h1 class="case-study-title">Ladepeche Belote: 2v2 Real-Time French Card Engine</h1>
         <p class="case-study-lead">
-          Developed a server-authoritative multiplayer Belote card platform with AI bot decision logic, complex trick-taking move validation, 82-point contract math, and headless integration into an international gaming portal via Gamify APIs.
+          A server-authoritative multiplayer Belote card platform with intelligent AI bot decision logic, complex trick-taking move validation, 82-point contract math, and headless integration into an international gaming portal via Gamify APIs.
         </p>
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">Game Mode</div>
+            <div class="meta-label">Game Topology</div>
             <div class="meta-val">Solo (with AI Bots), Multiplayer 2v2 &amp; Tournaments</div>
           </div>
           <div>
-            <div class="meta-label">Integration</div>
+            <div class="meta-label">Integration Layer</div>
             <div class="meta-val">Headless Game Service via Gamify Engine APIs</div>
           </div>
           <div>
-            <div class="meta-label">Card Engine</div>
-            <div class="meta-val">32-Card French Belote with Trump Rules</div>
+            <div class="meta-label">State Management</div>
+            <div class="meta-val">In-Memory Redis + MongoDB Session Persistence</div>
           </div>
           <div>
-            <div class="meta-label">Stack</div>
-            <div class="meta-val">Node.js, Socket.IO, Redis, MongoDB</div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">Node.js, Express.js, Socket.IO, PM2, Docker</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-belote.jpg" alt="Ladepeche Belote Real-Time Gameplay" class="case-featured-img" width="1200" height="750">
       </div>
@@ -109,25 +109,25 @@
       <div class="case-article">
         <!-- Section 1 -->
         <section class="case-section">
-          <h2>1. Game Overview &amp; What is Belote?</h2>
+          <h2>1. Platform Scope &amp; Game Mechanics</h2>
           <p>
-            Belote is one of the most popular trick-taking card games in France and continental Europe. Played by four players formed into two opposing partnerships (Team North/South vs. Team East/West), the game uses a 32-card deck (cards 7 through Ace).
+            Belote is France's premier partnership trick-taking card game, played by four players in two fixed partnerships (North-South vs. East-West) using a specialized 32-card deck. Each match combines strategic bidding, mandatory trick-taking hierarchies, and contract fulfillment.
           </p>
           <p>
-            The objective is for the partnership that takes the contract to score at least <strong>82 points</strong> out of 162 total available points by strategically choosing the trump suit, following suit rules, overtrumping opponents, and managing bonus declarations.
+            The game requires strict server-authoritative enforcement: all card shuffling, hand deals, trump determinations, and move legality are computed exclusively on the backend to eliminate client-side cheating or tampering.
           </p>
         </section>
 
         <!-- Section 2 -->
         <section class="case-section">
-          <h2>2. Headless Third-Party Portal Integration (Gamify API)</h2>
+          <h2>2. Headless Microservice Integration (Gamify API)</h2>
           <p>
-            This system was engineered as an autonomous <strong>game service microservice</strong> for an international media and gaming portal. Rather than maintaining user registrations and bank balances independently:
+            The Belote engine was built as a <strong>headless game service microservice</strong> designed to integrate into an external media and gaming portal. Rather than managing player accounts and billing directly:
           </p>
           <ul>
-            <li>When a player launches Belote from the client's web portal, our server authenticates the launch token, queries the client's <strong>Gamify API</strong> for user metadata, wallet balances, and active session tokens.</li>
-            <li>Throughout the game, all balance deductions, tournament fees, and winning prize payouts are communicated in real time back to the client's central gaming engine.</li>
-            <li>This headless separation allowed the client to offer an authentic Belote experience while retaining total control over their user base, KYC, and central wallet architecture.</li>
+            <li><strong>Session Authentication</strong>: When a player joins a table, the backend validates the user's JWT launch token against the client's central Gamify API to obtain player profiles, wallet balances, and game permissions.</li>
+            <li><strong>Bi-Directional Financial Sync</strong>: Tournament entry fees, in-game wagers, and final prize allocations are synchronized via RESTful webhooks to the client's central ledger with automated idempotency keys.</li>
+            <li><strong>Decoupled Scalability</strong>: This architecture enabled the client to retain complete ownership over their user database while delegating all real-time game state synchronization to our Node.js cluster.</li>
           </ul>
         </section>
 
@@ -137,99 +137,91 @@
 
           <div class="code-preview-box">
 <span class="code-comment"># Belote Round Execution State Machine</span>
-1. [Room Matchmaking &amp; Seating]
+[Phase 1: Table Matchmaking &amp; Seating]
    ├── 4 Real Players or Solo Mode (Empty seats filled by AI bots)
-   └── Assign Dealer Position &amp; Initialize Round
+   └── Rotate Dealer Position &amp; Deal 5 Cards + 1 Face-Up "Retourne Card"
          │
-2. [Initial Deal &amp; Retourne Card]
-   ├── Deal 5 cards to each of the 4 players
-   └── Reveal 1 face-up card: The "Retourne Card"
+[Phase 2: Trump Selection Bidding Loop]
+   ├── Round 1: Players sequentially accept Retourne suit as Trump or Pass
+   ├── Round 2 (If all pass): Pick any of remaining 3 suits as Trump or Pass
+   └── Redeal Trigger: If all 4 pass both rounds ➔ Discard &amp; redeal new hand
          │
-3. [Trump Selection Bidding Phase]
-   ├── Round 1: Players decide in clockwise order: Take Retourne Suit or Pass
-   └── Round 2 (If all pass): Pick any of remaining 3 suits or Pass
-   └── Redeal: If all 4 pass both rounds ➔ Discard cards &amp; redeal new hand
+[Phase 3: Trick Playing Phase (8 Consecutive Tricks)]
+   ├── Deal remaining 3 cards (8 cards total per player hand)
+   ├── Turn-by-turn move validation: Must follow suit; mandatory overtrump
+   ├── Evaluate Trick Winner ➔ Collect trick points ➔ Lead next trick
+   └── Belote/Rebelote Detection: +20 bonus points for holding King &amp; Queen of Trump
          │
-4. [Remaining Deal &amp; Trick Playing]
-   ├── Deal remaining 3 cards (8 cards total in hand)
-   ├── 8 successive tricks (4 cards played per trick)
-   ├── Server validates every card: Must follow suit; mandatory overtrump
-   └── Determine Trick Winner ➔ Collect trick ➔ Lead next trick
-         │
-5. [Round Score Evaluation]
-   ├── Calculate Trump vs. Non-Trump Card Points
-   ├── Add "Dix de Der" (+10 bonus points for winning final 8th trick)
-   ├── Validate Belote / Rebelote (+20 bonus points for King &amp; Queen of Trump)
-   ├── Contract Validation: Did taking team reach &gt;= 82 points?
-   │   ├── Success: Both teams keep their respective points
-   │   └── Failure (Dedans): Opposing team receives all 162 points!
-   └── Check Match Target: First team to exceed 501 points wins match
+[Phase 4: Contract Scoring &amp; Settlement]
+   ├── Sum Trick Points + 10 Bonus for Last Trick ("Dix de Der")
+   ├── Validate Contract: Did taking team reach &gt;= 82 points?
+   │   ├── Contract Passed: Both teams retain earned points
+   │   └── Contract Failed ("Dedans"): Opponents awarded all 162 round points
+   └── Match Target: First team to reach &gt; 501 points wins match ➔ Notify Gamify API
           </div>
         </section>
 
         <!-- Section 4 -->
         <section class="case-section">
-          <h2>4. Trump Hierarchy vs. Non-Trump Hierarchy</h2>
+          <h2>4. Server-Authoritative Move Validation &amp; Edge Cases</h2>
           <p>
-            Belote features a dynamic card valuation model depending on whether a card matches the chosen trump suit:
+            Every card played is validated against the official rules of French Belote:
           </p>
-          
-          <table class="benchmark-table">
-            <thead>
-              <tr>
-                <th>Card</th>
-                <th>Trump Suit Point Value</th>
-                <th>Non-Trump Suit Point Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Jack (J)</strong></td>
-                <td><strong style="color: var(--accent-cyan);">20 Points (Highest Trump)</strong></td>
-                <td>2 Points</td>
-              </tr>
-              <tr>
-                <td><strong>Nine (9)</strong></td>
-                <td><strong style="color: var(--accent-cyan);">14 Points (2nd Highest Trump)</strong></td>
-                <td>0 Points</td>
-              </tr>
-              <tr>
-                <td><strong>Ace (A)</strong></td>
-                <td>11 Points</td>
-                <td><strong style="color: #ffffff;">11 Points (Highest Non-Trump)</strong></td>
-              </tr>
-              <tr>
-                <td><strong>Ten (10)</strong></td>
-                <td>10 Points</td>
-                <td>10 Points</td>
-              </tr>
-              <tr>
-                <td><strong>King (K)</strong></td>
-                <td>4 Points</td>
-                <td>4 Points</td>
-              </tr>
-              <tr>
-                <td><strong>Queen (Q)</strong></td>
-                <td>3 Points</td>
-                <td>3 Points</td>
-              </tr>
-              <tr>
-                <td><strong>8 &amp; 7</strong></td>
-                <td>0 Points</td>
-                <td>0 Points</td>
-              </tr>
-            </tbody>
-          </table>
+          <ul>
+            <li><strong>Leading Suit Compliance</strong>: Players must play a card matching the leading suit of the trick if one exists in their hand.</li>
+            <li><strong>Mandatory Overtrumping (Monter à l'atout)</strong>: If a player cannot follow suit and plays a trump card, they must play a higher trump than any previously played trump if available. Under-trumping is disallowed unless the player has no higher trump.</li>
+            <li><strong>Belote / Rebelote State Tracking</strong>: If a player holds both King and Queen of the trump suit, the server tracks the pair. Playing the first card triggers the "Belote" announcement, and playing the second triggers "Rebelote", awarding 20 uncancelable bonus points.</li>
+          </ul>
         </section>
 
         <!-- Section 5 -->
         <section class="case-section">
-          <h2>5. AI Bot Decision Engine &amp; Reconnection Recovery</h2>
-          <ul>
-            <li><strong>Intelligent Bot Bidding</strong>: Bots evaluate their 5 initial cards, computing a weighted strength score based on counts of Jacks, 9s, and Aces in the Retourne suit. Only hands with sufficient point potential trigger an affirmative bid.</li>
-            <li><strong>Card Selection Logic</strong>: During trick play, the bot calculates optimal play: discarding low-value cards if their human partner is already winning the trick, or playing a winning trump if an opponent currently holds trick authority.</li>
-            <li><strong>Zero-Loss Reconnection</strong>: If a player experiences internet loss, the server maintains the player's seat and hand state in MongoDB &amp; Redis. When the client reconnects via Socket.IO, the active round state, cards in hand, current trump, and trick history are restored instantly without forfeiture.</li>
-          </ul>
+          <h2>5. Heuristic AI Bot Engine &amp; Reconnection Recovery</h2>
+          <div class="workflow-steps-list">
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">1</div>
+              <h3 class="workflow-step-title">Probabilistic Hand Evaluation</h3>
+              <p>During the bidding phase, bots analyze card strength based on high-value trump holdings (Jack and 9 counts). If the expected trick capture probability crosses a predefined threshold, the bot commits to the contract.</p>
+            </div>
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">2</div>
+              <h3 class="workflow-step-title">Partner-Aware Trick Play</h3>
+              <p>The bot monitors whether its human or bot partner currently holds trick authority. If the partner is winning, the bot sluffs low-value off-suit cards. If an opponent leads, the bot plays the minimal winning card to secure the trick.</p>
+            </div>
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">3</div>
+              <h3 class="workflow-step-title">Humanized Latency Simulation</h3>
+              <p>To provide a natural multiplayer experience, bot turns incorporate randomized Gaussian delays (800ms–2,200ms), preventing unnatural instantaneous play.</p>
+            </div>
+            <div class="workflow-step-card">
+              <div class="workflow-step-num">4</div>
+              <h3 class="workflow-step-title">Zero-Loss Reconnection Architecture</h3>
+              <p>If a player experiences mobile disconnects, the server persists the active table state in Redis and MongoDB. Upon reconnect, the socket re-authenticates and seamlessly receives the current trick state, hand cards, and scores without forfeiting the round.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6 -->
+        <section class="case-section">
+          <h2>6. Full Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Languages &amp; Runtimes</div>
+              <div class="meta-val">Node.js (ES6+), JavaScript</div>
+            </div>
+            <div>
+              <div class="meta-label">Frameworks &amp; Sockets</div>
+              <div class="meta-val">Express.js, Socket.IO, RESTful APIs</div>
+            </div>
+            <div>
+              <div class="meta-label">Databases &amp; Caching</div>
+              <div class="meta-val">MongoDB (Mongoose), Redis (Session Cache)</div>
+            </div>
+            <div>
+              <div class="meta-label">Infrastructure &amp; Security</div>
+              <div class="meta-val">PM2 Cluster, Docker, Helmet, Winston Logger</div>
+            </div>
+          </div>
         </section>
 
         <!-- CTA -->

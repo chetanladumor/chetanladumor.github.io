@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Multi-Agent AI Support: Advanced Hybrid RAG &amp; pgvector | Chetan V. Ladumor</title>
-  <meta name="description" content="In-depth architectural case study of an enterprise multi-agent customer support platform featuring hybrid RAG (pgvector HNSW + GIN keyword search), Reciprocal Rank Fusion (RRF), and cross-encoder reranking by Chetan Ladumor.">
-  <meta name="keywords" content="Hybrid RAG Node.js, pgvector HNSW PostgreSQL, Reciprocal Rank Fusion RRF, Multi-Agent AI System, Vercel AI SDK, Chetan Ladumor">
+  <title>Enterprise Multi-Agent AI Support: Hybrid RAG &amp; pgvector | Chetan V. Ladumor</title>
+  <meta name="description" content="In-depth architectural case study of an enterprise multi-agent customer support platform built by Chetan Ladumor with Node.js, TypeScript, PostgreSQL, pgvector, HNSW, and hybrid search RAG.">
+  <meta name="keywords" content="Hybrid RAG Node.js, pgvector HNSW PostgreSQL, Multi-Agent Customer Support, Vercel AI SDK TypeScript, Chetan Ladumor">
   <meta name="author" content="Chetan V. Ladumor">
   <link rel="canonical" href="https://chetanladumor.github.io/projects/ai-customer-support.html">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Multi-Agent AI Support: Advanced Hybrid RAG Architecture | Chetan Ladumor">
-  <meta property="og:description" content="Deep dive into query rewriting, pgvector HNSW indexing, GIN lexical search, RRF rank fusion, and AWS ECS Fargate deployment.">
+  <meta property="og:title" content="Enterprise Multi-Agent Support Platform Architecture | Chetan Ladumor">
+  <meta property="og:description" content="How Chetan Ladumor engineered a production Hybrid RAG pipeline combining dense vector embeddings and sparse lexical search in PostgreSQL.">
   <meta property="og:image" content="https://chetanladumor.github.io/assets/images/project-ai-customer-support.jpg">
   <meta property="og:url" content="https://chetanladumor.github.io/projects/ai-customer-support.html">
 
@@ -25,15 +25,15 @@
   {
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "Enterprise Multi-Agent AI Support Platform with Hybrid RAG & pgvector",
-    "description": "Architectural breakdown of an enterprise RAG retrieval pipeline combining dense vector embeddings with sparse full-text search, reciprocal rank fusion, and SSE streaming.",
+    "headline": "Enterprise Multi-Agent AI Support Platform: Hybrid RAG & pgvector Architecture",
+    "description": "Architectural breakdown of an enterprise AI support system with hybrid retrieval (dense pgvector HNSW + sparse GIN lexical search), dynamic agent routing, and SSE streaming.",
     "author": {
       "@type": "Person",
       "name": "Chetan V. Ladumor",
       "url": "https://chetanladumor.github.io/"
     },
     "image": "https://chetanladumor.github.io/assets/images/project-ai-customer-support.jpg",
-    "datePublished": "2026-08-25"
+    "datePublished": "2026-07-12"
   }
   </script>
 </head>
@@ -70,38 +70,38 @@
           <span class="breadcrumbs-sep">/</span>
           <a href="../index.html#projects">Projects</a>
           <span class="breadcrumbs-sep">/</span>
-          <span style="color: #ffffff;">Multi-Agent AI Customer Support</span>
+          <span style="color: #ffffff;">AI Customer Support</span>
         </nav>
 
-        <span class="project-badge-tag tag-ai" style="margin-bottom: 1rem; display: inline-block;">Agentic AI &amp; Hybrid RAG</span>
-        <h1 class="case-study-title">Multi-Agent AI Customer Support &amp; Hybrid RAG Platform</h1>
+        <span class="project-badge-tag tag-ai" style="margin-bottom: 0.8rem; display: inline-block;">Agentic AI &amp; Enterprise RAG</span>
+        <h1 class="case-study-title">Multi-Agent AI Customer Support: Hybrid RAG &amp; pgvector</h1>
         <p class="case-study-lead">
-          An enterprise-grade customer support platform built with Node.js, Express, TypeScript, and React. Features an advanced hybrid RAG retrieval pipeline combining pgvector HNSW dense embeddings with PostgreSQL GIN keyword search, unified through Reciprocal Rank Fusion (RRF) and cross-encoder reranking.
+          An enterprise AI customer service platform combining PostgreSQL pgvector HNSW indexing, sparse lexical GIN search, Reciprocal Rank Fusion reranking, and multi-agent intent routing for hallucination-free automated support.
         </p>
 
         <div class="case-meta-grid">
           <div>
-            <div class="meta-label">RAG Architecture</div>
-            <div class="meta-val">Hybrid (pgvector HNSW + GIN + RRF)</div>
+            <div class="meta-label">Retrieval Architecture</div>
+            <div class="meta-val">Hybrid RAG (pgvector HNSW + GIN Lexical)</div>
           </div>
           <div>
-            <div class="meta-label">Agent Coordination</div>
-            <div class="meta-val">Support, Billing &amp; Order Router Agents</div>
+            <div class="meta-label">Agent Orchestration</div>
+            <div class="meta-val">Vercel AI SDK, Multi-Model Tool Routing</div>
           </div>
           <div>
-            <div class="meta-label">Streaming &amp; Schema</div>
-            <div class="meta-val">Server-Sent Events (SSE) &amp; Zod Tools</div>
+            <div class="meta-label">Data &amp; ORM</div>
+            <div class="meta-val">PostgreSQL 16, pgvector, Prisma 6</div>
           </div>
           <div>
-            <div class="meta-label">Cloud Deployment</div>
-            <div class="meta-val">Docker on AWS ECS Fargate &amp; RDS</div>
+            <div class="meta-label">Core Runtime</div>
+            <div class="meta-val">TypeScript 5.8, Node.js, Express 5, Docker</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Content Article -->
-    <article class="container" style="padding-top: 3.5rem;">
+    <article class="container" style="padding-top: 1rem;">
       <div class="case-featured-img-box">
         <img src="../assets/images/project-ai-customer-support.jpg" alt="Multi-Agent Customer Support RAG Pipeline" class="case-featured-img" width="1200" height="750">
       </div>
@@ -111,10 +111,10 @@
         <section class="case-section">
           <h2>1. Executive Summary &amp; Motivation</h2>
           <p>
-            Standard vector search (semantic retrieval) fails frequently in customer support: it is unable to accurately retrieve specific order numbers, product SKUs, or exact error codes (e.g., <em>"Error 504"</em> or <em>"Order #98124"</em>). Conversely, traditional keyword search fails to understand conversational synonyms (e.g., confusing <em>"refund"</em> with <em>"money back"</em>).
+            Standard semantic vector search alone often fails in enterprise customer support: pure cosine distance struggles to match exact serial numbers, product SKUs, and specific alphanumeric error codes. Conversely, traditional keyword search fails to interpret conversational nuance and user intent.
           </p>
           <p>
-            I engineered a <strong>production-grade Hybrid RAG pipeline</strong> in PostgreSQL that combines both worlds, eliminating hallucinations and ensuring that customer responses are strictly grounded in verified enterprise documentation with traceable source citations.
+            I engineered a <strong>production-grade Hybrid RAG pipeline</strong> in PostgreSQL that unifies dense semantic embeddings with sparse lexical indexing, eliminating hallucinations and ensuring answers are strictly grounded in verified enterprise documentation with traceable citations.
           </p>
         </section>
 
@@ -127,15 +127,15 @@
               <div class="workflow-step-num">1</div>
               <h3 class="workflow-step-title">Query Rewriting &amp; Intent Distillation</h3>
               <p>
-                Customers communicate conversationally (e.g., <em>"Hey, I bought these headphones last week and they stopped working, can I return them?"</em>). The system first executes an ultra-fast local LLM step to distill this into a search-optimized intent query: <code>"return window defective headphones warranty policy"</code>.
+                Customer questions often contain conversational clutter. An ultra-fast local LLM step distills noisy user messages into search-optimized queries while extracting named entities (order IDs, product models, error codes).
               </p>
             </div>
 
             <div class="workflow-step-card">
               <div class="workflow-step-num">2</div>
-              <h3 class="workflow-step-title">Multi-Tenant Pre-Filtering</h3>
+              <h3 class="workflow-step-title">Multi-Tenant Hard Filtering</h3>
               <p>
-                Before executing any vector distance calculations, the SQL query applies hard filters for <code>tenantId</code> and <code>country</code>. Pre-filtering ensures strict enterprise data isolation (Company A never retrieves Company B's confidential docs) while saving massive compute overhead compared to post-filtering.
+                Before executing any vector calculations, the database query applies hard SQL filters on <code>tenantId</code> and role-based access control. Pre-filtering guarantees enterprise data boundary isolation while reducing memory search space.
               </p>
             </div>
 
@@ -147,29 +147,23 @@
               </p>
               <ul>
                 <li><strong>Dense Semantic Search</strong>: Uses <code>pgvector</code> with an <strong>HNSW (Hierarchical Navigable Small World)</strong> index to measure cosine similarity across embeddings.</li>
-                <li><strong>Sparse Lexical Search</strong>: Uses PostgreSQL's <strong>GIN index</strong> on a precomputed <code>search_vector</code> column (generated via automated database triggers) to capture exact part numbers and SKU codes.</li>
+                <li><strong>Sparse Lexical Search</strong>: Uses PostgreSQL's <strong>GIN index</strong> on a precomputed <code>search_vector</code> column to capture exact part numbers and SKU codes.</li>
               </ul>
             </div>
 
             <div class="workflow-step-card">
               <div class="workflow-step-num">4</div>
-              <h3 class="workflow-step-title">Reciprocal Rank Fusion (RRF)</h3>
+              <h3 class="workflow-step-title">Reciprocal Rank Fusion (RRF) Reranking</h3>
               <p>
-                Because cosine distance (0.0 to 1.0) and full-text TF-IDF scores (e.g., 14.2) reside on incompatible scales, raw addition produces biased results. I implemented the industry-standard <strong>RRF formula</strong>:
-              </p>
-              <div class="code-preview-box" style="margin: 0.8rem 0;">
-RRF_Score = (1.0 / (60 + Vector_Rank)) + (1.0 / (60 + Keyword_Rank))
-              </div>
-              <p>
-                This ranks documents based purely on their position in both search lists, producing a balanced candidate set of the top 30 chunks.
+                Because cosine distance and full-text TF-IDF scores operate on incompatible mathematical scales, raw score addition causes severe bias. The system applies Reciprocal Rank Fusion, evaluating candidates purely by their relative ranking in both candidate lists to generate a balanced, scale-invariant top candidate set.
               </p>
             </div>
 
             <div class="workflow-step-card">
               <div class="workflow-step-num">5</div>
-              <h3 class="workflow-step-title">Cross-Encoder Reranker (LLM-as-a-Judge)</h3>
+              <h3 class="workflow-step-title">Cross-Encoder Re-Ranking Stage</h3>
               <p>
-                The top 30 candidate chunks are passed to a cross-encoder stage. Unlike bi-encoders that encode documents in isolation, the cross-encoder evaluates the user's rewritten query alongside the chunk text simultaneously, scoring relevance from 0 to 100 and filtering down to the <strong>Top 2 most authoritative chunks</strong>.
+                The top candidate chunks are processed through a cross-encoder model. Unlike bi-encoders that process queries and documents separately, the cross-encoder performs joint token-level attention between query and context, isolating the top 2 most authoritative chunks.
               </p>
             </div>
 
@@ -177,7 +171,7 @@ RRF_Score = (1.0 / (60 + Vector_Rank)) + (1.0 / (60 + Keyword_Rank))
               <div class="workflow-step-num">6</div>
               <h3 class="workflow-step-title">Grounded Generation with Traceable Citations</h3>
               <p>
-                The final prompt injects the curated chunks with strict system instructions prohibiting ungrounded answers. Responses stream to the user via <strong>Server-Sent Events (SSE)</strong>, complete with clickable citation chips linking to verified knowledge base article IDs.
+                The curated context is assembled into a token-bounded prompt with strict grounding constraints. Responses stream to the user via <strong>Server-Sent Events (SSE)</strong>, complete with clickable citation chips linking directly to source article IDs.
               </p>
             </div>
           </div>
@@ -190,8 +184,8 @@ RRF_Score = (1.0 / (60 + Vector_Rank)) + (1.0 / (60 + Keyword_Rank))
             Beyond knowledge retrieval, the platform employs specialized sub-agents:
           </p>
           <ul>
-            <li><strong>Intent Router Agent</strong>: Classifies whether the customer requires Order Tracking, Billing &amp; Invoices, or General Technical Support.</li>
-            <li><strong>Order Agent</strong>: Equipped with Zod-validated database tool calls to look up order shipment statuses, tracking numbers, and delivery ETAs directly from PostgreSQL.</li>
+            <li><strong>Intent Router Agent</strong>: Classifies customer requests into Order Tracking, Billing &amp; Invoices, or General Technical Inquiries.</li>
+            <li><strong>Order Agent</strong>: Equipped with Zod-validated database tool calls to look up real-time shipment milestones, tracking numbers, and delivery ETAs directly from PostgreSQL.</li>
             <li><strong>Billing Agent</strong>: Handles refund requests, invoice lookups, and payment gateway status verification through Stripe API webhooks.</li>
           </ul>
         </section>
@@ -202,8 +196,31 @@ RRF_Score = (1.0 / (60 + Vector_Rank)) + (1.0 / (60 + Keyword_Rank))
           <div class="callout-box">
             <div class="callout-title">⚙️ Why HNSW Over IVFFlat?</div>
             <p style="margin: 0; color: var(--text-secondary);">
-              While IVFFlat requires periodic retraining and degrades query recall under high update volume, <strong>HNSW (Hierarchical Navigable Small World)</strong> constructs a multi-layer graph index. It enables $O(\log N)$ query traversal with high recall (&gt;98%) and supports immediate real-time vector inserts without maintenance downtime.
+              While IVFFlat requires periodic retraining and degrades query recall under high update volume, <strong>HNSW (Hierarchical Navigable Small World)</strong> constructs a multi-layer graph index. It enables fast logarithmic query traversal with high recall (&gt;98%) and supports immediate real-time vector inserts without maintenance downtime.
             </p>
+          </div>
+        </section>
+
+        <!-- Section 5 -->
+        <section class="case-section">
+          <h2>5. Full Technology Stack</h2>
+          <div class="case-meta-grid">
+            <div>
+              <div class="meta-label">Languages &amp; Core</div>
+              <div class="meta-val">TypeScript 5.8, Node.js, Express 5</div>
+            </div>
+            <div>
+              <div class="meta-label">AI &amp; Embeddings</div>
+              <div class="meta-val">Vercel AI SDK, @xenova/transformers, OpenAI, Google Gemini</div>
+            </div>
+            <div>
+              <div class="meta-label">Database &amp; ORM</div>
+              <div class="meta-val">PostgreSQL 16, pgvector (HNSW), Prisma 6</div>
+            </div>
+            <div>
+              <div class="meta-label">Tooling &amp; Quality</div>
+              <div class="meta-val">Zod 4, Helmet, Morgan, Jest, Supertest, Docker</div>
+            </div>
           </div>
         </section>
 
