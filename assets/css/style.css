@@ -565,7 +565,7 @@ h1, h2, h3, h4, h5, h6 {
 .chip-ws { top: -20px; right: -25px; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; animation-delay: 0s; }
 .chip-ai { bottom: -20px; right: -15px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; animation-delay: 1.5s; }
 .chip-kafka { bottom: 20px; left: -35px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24; animation-delay: 0.8s; }
-.chip-redis { top: 30px; left: -30px; border-color: rgba(244, 63, 94, 0.4); color: #f43f5e; animation-delay: 2.2s; }
+.chip-aws, .chip-redis { top: 30px; left: -30px; border-color: rgba(249, 115, 22, 0.45); color: #fb923c; animation-delay: 2.2s; }
 
 @keyframes floatSlow {
   0% { transform: translateY(0px); }
