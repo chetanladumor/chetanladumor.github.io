@@ -5,7 +5,6 @@
 
 🌐 **Live URL**: [https://chetanladumor.github.io](https://chetanladumor.github.io)  
 💼 **LinkedIn**: [linkedin.com/in/chetan-ladumor](https://www.linkedin.com/in/chetan-ladumor)  
-⭐ **Freelancer**: [freelancer.in/u/Chetanladumor](https://www.freelancer.in/u/Chetanladumor)  
 📫 **Email**: [ladumorchetan@yahoo.com](mailto:ladumorchetan@yahoo.com)  
 💬 **WhatsApp**: [+91 84695 35440](https://wa.me/918469535440)
 

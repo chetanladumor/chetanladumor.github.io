@@ -19,7 +19,6 @@ const PROJECTS_DATA = [
     skills: ['node.js', 'websockets', 'socket.io', 'redis', 'kafka', 'postgresql', 'gaming', 'bingo', 'high concurrency', 'distributed systems', 'microservices'],
     metrics: '40+ Venues Synchronized | Sub-100ms TV & Mobile Latency | 5 Custom Game Engines',
     youtubeUrl: 'https://youtu.be/sxT9Rkm8hlw?si=qEjvGlZB4TUIZ48I',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'swisspoker',
@@ -35,7 +34,6 @@ const PROJECTS_DATA = [
     skills: ['node.js', 'socket.io', 'websockets', 'redis', 'mongodb', 'postgresql', 'poker', 'gaming', 'high concurrency'],
     metrics: 'Multi-Table Dynamic Balancing | Zero-Disconnection State Recovery | Sub-50ms Action Turnaround',
     githubUrl: 'https://github.com/chetanladumor',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'crash-game',
@@ -50,7 +48,6 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'WebSockets', 'Socket.IO', 'Redis', 'SHA-256 Cryptography', 'PostgreSQL', 'High Concurrency'],
     skills: ['node.js', 'websockets', 'socket.io', 'redis', 'crash', 'gaming', 'crypto', 'provably fair', 'high concurrency'],
     metrics: '50ms State Ticks | 100% Provably Fair Cryptographic Verification | Thousands of Active Bets per Round',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'ai-pr-review',
@@ -66,7 +63,6 @@ const PROJECTS_DATA = [
     skills: ['langgraph', 'langchain', 'ai', 'ai agents', 'rag', 'openrouter', 'node.js', 'typescript', 'github actions', 'docker'],
     metrics: 'Automated Codebase AST Analysis | 70% Reduction in Manual Review Time | Multi-Model Dynamic Routing',
     githubUrl: 'https://github.com/chetanladumor/ai-code-review',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'ai-customer-support',
@@ -82,7 +78,6 @@ const PROJECTS_DATA = [
     skills: ['node.js', 'typescript', 'postgresql', 'pgvector', 'rag', 'ai agents', 'docker', 'aws ecs', 'prisma', 'express.js'],
     metrics: 'Hybrid RAG (Vector + BM25 Lexical) | Multi-Tenant Data Isolation | Sub-Second SSE Response Streaming',
     githubUrl: 'https://github.com/chetanladumor/customer-support-node-agent',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'ecommerce-microservices',
@@ -98,7 +93,6 @@ const PROJECTS_DATA = [
     skills: ['node.js', 'express.js', 'postgresql', 'kafka', 'rabbitmq', 'redis', 'microservices', 'event-driven architecture', 'docker', 'stripe'],
     metrics: '42% Latency Reduction at Checkout | High-Throughput Message Queue Ingestion | Real-Time WebSocket Order Tracking',
     githubUrl: 'https://github.com/chetanladumor/React-Ecom',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'wewatchover-health',
@@ -113,7 +107,6 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'Socket.IO', 'MongoDB', 'Twilio API', 'IoT Wearable APIs', 'Redis', 'AWS EC2'],
     skills: ['node.js', 'socket.io', 'mongodb', 'redis', 'twilio', 'aws', 'iot', 'healthtech', 'websockets'],
     metrics: '24/7 Continuous Biometric Stream Ingestion | Sub-2s Emergency Alert Dispatch | Live Medical Dashboards',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'lottery-jackpot',
@@ -128,7 +121,6 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'MySQL', 'Redis Distributed Locks', 'REST APIs', 'RabbitMQ', 'Docker'],
     skills: ['node.js', 'mysql', 'redis', 'rabbitmq', 'lottery', 'gaming', 'docker', 'restful apis'],
     metrics: 'Automated Zero-Latency Ticket Verification | Cryptographic Draw Audit Logs | High-Concurrency Bet Ingestion',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'dating-anyflawa',
@@ -143,7 +135,6 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'Redis Geospatial', 'MongoDB Spatial', 'WebSockets', 'Express.js', 'AWS S3'],
     skills: ['node.js', 'redis', 'mongodb', 'geospatial', 'websockets', 'express.js', 'aws'],
     metrics: 'Sub-5ms Proximity Distance Calculations | Live Location Geofencing | Scalable Socket Chat Rooms',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'belote-multiplayer',
@@ -158,7 +149,6 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'Socket.IO', 'Redis Caching', 'PostgreSQL', 'Express.js', 'State Machines'],
     skills: ['node.js', 'socket.io', 'redis', 'postgresql', 'belote', 'gaming', 'state synchronization'],
     metrics: 'Strict Server-Authoritative Card Rules | 2v2 Real-Time Room Orchestration | Instant Reconnection Resumption',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   },
   {
     id: 'slot-game',
@@ -173,7 +163,6 @@ const PROJECTS_DATA = [
     techs: ['Node.js', 'Socket.IO', 'RNG Algorithms', 'MySQL', 'Redis Caching', 'Atomic Transactions'],
     skills: ['node.js', 'socket.io', 'mysql', 'redis', 'slots', 'gaming', 'rng', 'high concurrency'],
     metrics: 'Configurable Paylines & RTP Models | Sub-10ms Reel Math Evaluation | Atomic Balance Isolation',
-    freelancerUrl: 'https://www.freelancer.in/u/Chetanladumor'
   }
 ];
 
@@ -277,7 +266,6 @@ function renderProjects(items) {
           <div class="project-external-links">
             ${proj.youtubeUrl ? `<a href="${proj.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="Watch Video Demo" aria-label="YouTube Demo">📺</a>` : ''}
             ${proj.githubUrl ? `<a href="${proj.githubUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="View Source on GitHub" aria-label="GitHub Repo">🐙</a>` : ''}
-            <a href="${proj.freelancerUrl}" target="_blank" rel="noopener noreferrer" class="project-ext-icon" title="Freelancer Verified Item" aria-label="Freelancer Profile">⭐</a>
           </div>
         </div>
       </div>
@@ -436,10 +424,15 @@ window.openProjectModal = function(projectId) {
     liveAction.style.display = 'inline-flex';
     liveAction.href = proj.youtubeUrl;
     liveAction.textContent = 'Watch Video Demo 📺';
+    liveAction.onclick = null;
   } else {
     liveAction.style.display = 'inline-flex';
-    liveAction.href = proj.freelancerUrl;
-    liveAction.textContent = 'View on Freelancer ⭐';
+    liveAction.href = '#contact';
+    liveAction.textContent = 'Discuss System Architecture 💬';
+    liveAction.onclick = () => {
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    };
   }
 
   if (proj.githubUrl) {
