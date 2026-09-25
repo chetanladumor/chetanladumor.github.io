@@ -3,13 +3,13 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://chetanladumor.github.io/</loc>
-    <lastmod>2026-09-24</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-09-25</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://chetanladumor.github.io/assets/images/og-image.jpg</image:loc>
-      <image:title>Chetan V. Ladumor - Senior Node.js Developer &amp; Backend Systems Architect</image:title>
-      <image:caption>10+ years experience building 20k+ CCU WebSocket platforms, iGaming engines, and Agentic AI architectures.</image:caption>
+      <image:title>Chetan V. Ladumor - Lead Full Stack &amp; AI Engineer</image:title>
+      <image:caption>Lead Full Stack &amp; AI Engineer with 10+ years experience architecting Agentic AI, 20k+ CCU WebSockets, and high-concurrency Node.js &amp; React platforms.</image:caption>
     </image:image>
   </url>
   <url>

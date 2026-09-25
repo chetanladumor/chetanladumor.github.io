@@ -1,6 +1,6 @@
 # Chetan V. Ladumor - Official Portfolio
 
-> **Senior Node.js Developer | Backend Systems Architect**  
+> **Lead Full Stack & AI Engineer | Systems Architect**  
 > High-concurrency distributed systems, 20,000+ CCU real-time WebSocket platforms, event-driven microservices (Kafka, RabbitMQ, Redis), and Agentic AI engineering (LangGraph, pgvector RAG).
 
 🌐 **Live URL**: [https://chetanladumor.github.io](https://chetanladumor.github.io)  

@@ -1,6 +1,6 @@
 /**
  * Chetan V. Ladumor - Portfolio Interactive Engine
- * Senior Node.js Developer | Backend Systems Architect
+ * Lead Full Stack & AI Engineer | Systems Architect
  */
 
 // All 11 Verified Shipped Projects
@@ -202,12 +202,12 @@ function initTypewriter() {
   if (!target) return;
 
   const roles = [
-    'Senior Node.js Developer (10 YOE)',
-    'Immediate Joiner (Worldwide Remote)',
-    'Microservices & Distributed Systems Architect',
+    'Lead Full Stack & AI Engineer (10+ Yrs)',
+    'Agentic AI & LangGraph Architect (RAG, pgvector)',
+    'Node.js & React.js (MERN) Specialist',
     '20,000+ CCU Real-Time WebSockets Specialist',
-    'iGaming & Casino Gaming Backend Architect',
-    'Agentic AI & LangGraph Engineer'
+    'Distributed Systems & Kafka Architect',
+    'Immediate Joiner (Worldwide Remote)'
   ];
 
   let roleIdx = 0;

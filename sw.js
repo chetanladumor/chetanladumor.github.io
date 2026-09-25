@@ -3,7 +3,7 @@
  * Cache-first for static assets, network-first for HTML pages.
  */
 
-const CACHE_NAME = 'chetan-dev-v2';
+const CACHE_NAME = 'chetan-dev-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
