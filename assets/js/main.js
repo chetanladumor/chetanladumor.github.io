@@ -202,11 +202,12 @@ function initTypewriter() {
   if (!target) return;
 
   const roles = [
-    'Senior Node.js Developer',
-    'Backend Systems Architect',
-    '20,000+ CCU Real-Time Specialist',
-    'Agentic AI & LangGraph Engineer',
-    'Kafka & Distributed Microservices Architect'
+    'Senior Node.js Developer (10 YOE)',
+    'Immediate Joiner (Worldwide Remote)',
+    'Microservices & Distributed Systems Architect',
+    '20,000+ CCU Real-Time WebSockets Specialist',
+    'iGaming & Casino Gaming Backend Architect',
+    'Agentic AI & LangGraph Engineer'
   ];
 
   let roleIdx = 0;
